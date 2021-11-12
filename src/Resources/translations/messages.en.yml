@@ -1,0 +1,4 @@
+byjuno:
+    byjuno_plugin:
+        signature_key: Configuration key
+        gateway_label: Byjuno
