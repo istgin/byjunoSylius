@@ -4,7 +4,7 @@
 
         <defaults public="true" autoconfigure="false" autowire="false"/>
 
-        <service id="bitbag.payu_plugin.gateway_factory" class="Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder">
+        <service id="byjuno.payu_plugin.gateway_factory" class="Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder">
             <argument>BitBag\SyliusPayUPlugin\PayUGatewayFactory</argument>
             <tag name="payum.gateway_factory_builder" factory="payu"/>
         </service>
