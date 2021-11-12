@@ -4,7 +4,7 @@
 
         <defaults public="true" autoconfigure="false" autowire="false"/>
 
-        <service id="byjuno.byjuno_plugin.form.type.gateway_configuration" class="BitBag\SyliusPayUPlugin\Form\Type\ByjunoGatewayConfigurationType">
+        <service id="byjuno.byjuno_plugin.form.type.gateway_configuration" class="Ij\SyliusByjunoPlugin\Form\Type\ByjunoGatewayConfigurationType">
             <tag name="sylius.gateway_configuration_type" type="byjuno" label="byjuno.byjuno_plugin.gateway_label"/>
             <tag name="form.type"/>
         </service>
