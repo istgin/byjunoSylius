@@ -1,7 +1,7 @@
 {
     "name": "byjuno/byjuno-plugin",
     "type": "sylius-plugin",
-    "description": "PayU payment plugin for Sylius applications",
+    "description": "Byjuno payment plugin for Sylius applications",
     "license": "MIT",
     "require": {
         "php": "^7.4 || ^8.0",
@@ -38,13 +38,6 @@
         "vimeo/psalm": "4.4.1",
         "slevomat/coding-standard": "~6.0",
         "symfony/dependency-injection": "<4.4.19 || >=5.0.0 <5.2.2"
-    },
-    "conflict": {
-        "symfony/symfony": "4.1.8",
-        "symfony/browser-kit": "4.1.8",
-        "symfony/dom-crawler": "4.1.8",
-        "symfony/routing": "4.1.8",
-        "symfony/doctrine-bridge": "4.4.16"
     },
     "prefer-stable": true,
     "autoload": {
