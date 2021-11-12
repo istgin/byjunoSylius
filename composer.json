@@ -1,5 +1,5 @@
 {
-    "name": "byjuno/byjuno-plugin",
+    "name": "ij/byjuno-plugin",
     "type": "sylius-plugin",
     "description": "Byjuno payment plugin for Sylius applications",
     "license": "MIT",
