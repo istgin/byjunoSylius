@@ -4,9 +4,9 @@
 
         <defaults public="true" autoconfigure="false" autowire="false"/>
 
-        <service id="byjuno.payu_plugin.gateway_factory" class="Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder">
-            <argument>BitBag\SyliusPayUPlugin\PayUGatewayFactory</argument>
-            <tag name="payum.gateway_factory_builder" factory="payu"/>
+        <service id="byjuno.byjuno_plugin.gateway_factory" class="Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder">
+            <argument>BitBag\SyliusPayUPlugin\ByjunoGatewayFactory</argument>
+            <tag name="payum.gateway_factory_builder" factory="byjuno"/>
         </service>
 
     </services>

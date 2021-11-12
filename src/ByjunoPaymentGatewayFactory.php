@@ -13,7 +13,7 @@ final class ByjunoPaymentGatewayFactory extends GatewayFactory
     {
         $config->defaults(
             [
-                'payum.factory_name' => 'byjuno_payment',
+                'payum.factory_name' => 'byjuno',
                 'payum.factory_title' => 'Byjuno',
             ]
         );
