@@ -1,11 +1,5 @@
 <?php
 
-/*
- * This file was created by developers working at BitBag
- * Do you need more information about us and what we do? Visit our https://bitbag.io website!
- * We are hiring developers from all over the world. Join us and start your new, exciting adventure and become part of us: https://bitbag.io/career
-*/
-
 declare(strict_types=1);
 
 namespace BitBag\SyliusPayUPlugin;
@@ -13,14 +7,14 @@ namespace BitBag\SyliusPayUPlugin;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayFactory;
 
-final class PayUGatewayFactory extends GatewayFactory
+final class ByjunoPaymentGatewayFactory extends GatewayFactory
 {
     protected function populateConfig(ArrayObject $config): void
     {
         $config->defaults(
             [
-                'payum.factory_name' => 'payu',
-                'payum.factory_title' => 'PayU',
+                'payum.factory_name' => 'byjuno_payment',
+                'payum.factory_title' => 'Byjuno',
             ]
         );
 
