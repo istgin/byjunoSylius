@@ -1,0 +1,29 @@
+<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+
+        <defaults public="true" autoconfigure="false" autowire="false"/>
+
+
+        <service id="byjuno.byjuno_plugin.action.status" class="Ij\SyliusByjunoPlugin\Action\StatusAction">
+            <!--<argument type="service" id="byjuno.byjuno_plugin.bridge.byjuno"/> -->
+            <tag name="payum.action" factory="byjuno" alias="payum.action.status"/>
+        </service>
+
+        <service id="byjuno.byjuno_plugin.action.capture" class="Ij\SyliusByjunoPlugin\Action\CaptureAction">
+            <!--<argument type="service" id="bitbag.payu_plugin.bridge.open_payu"/> -->
+            <argument type="service" id="sylius.http_client" />
+            <tag name="payum.action" factory="byjuno" alias="payum.action.capture"/>
+        </service>
+
+        <service id="byjuno.byjuno_plugin.action.notify" class="Ij\SyliusByjunoPlugin\Action\NotifyAction">
+            <!--<argument type="service" id="bitbag.payu_plugin.bridge.open_payu"/> -->
+            <tag name="payum.action" factory="byjuno" alias="payum.action.notify"/>
+        </service>
+
+        <service id="byjuno.byjuno_plugin.action.convert_payment" class="Ij\SyliusByjunoPlugin\Action\ConvertPaymentAction">
+            <tag name="payum.action" factory="byjuno" alias="payum.action.convert_payment"/>
+        </service>
+
+    </services>
+</container>

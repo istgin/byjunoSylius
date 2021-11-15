@@ -5,7 +5,7 @@
         <defaults public="true" autoconfigure="false" autowire="false"/>
 
         <service id="byjuno.byjuno_plugin.gateway_factory" class="Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder">
-            <argument>Ij\SyliusByjunoPlugin\ByjunoGatewayFactory</argument>
+            <argument>Ij\SyliusByjunoPlugin\ByjunoPaymentGatewayFactory</argument>
             <tag name="payum.gateway_factory_builder" factory="byjuno"/>
         </service>
 
