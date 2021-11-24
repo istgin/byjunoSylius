@@ -1,4 +1,7 @@
 byjuno:
     byjuno_plugin:
+        mode: Mode
+        test: Test mode
+        live: Production mode
         signature_key: Configuration key
         gateway_label: Byjuno

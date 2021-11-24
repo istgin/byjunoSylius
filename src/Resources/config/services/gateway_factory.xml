@@ -1,5 +1,9 @@
 <container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="sylius.byjuno.prioritized_factory_name">byjuno</parameter>
+    </parameters>
     <services>
 
         <defaults public="true" autoconfigure="false" autowire="false"/>
@@ -8,6 +12,15 @@
             <argument>Ij\SyliusByjunoPlugin\ByjunoPaymentGatewayFactory</argument>
             <tag name="payum.gateway_factory_builder" factory="byjuno"/>
         </service>
+
+        <service
+            id="Ij\SyliusByjunoPlugin\Resolver\ByjunoPaymentMethodsResolver"
+            decorates="sylius.payment_methods_resolver"
+        >
+            <argument type="service" id="Ij\SyliusByjunoPlugin\Resolver\ByjunoPaymentMethodsResolver.inner" />
+            <argument>%sylius.byjuno.prioritized_factory_name%</argument>
+        </service>
+
 
     </services>
 </container>
