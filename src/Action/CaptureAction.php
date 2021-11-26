@@ -8,6 +8,7 @@ namespace Ij\SyliusByjunoPlugin\Action;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use Ij\SyliusByjunoPlugin\Api\DataHelper;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
@@ -34,15 +35,10 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
 
         /** @var SyliusPaymentInterface $payment */
         $payment = $request->getModel();
-
         try {
-            $response = $this->client->request('POST', 'https://sylius-payment.free.beeceptor.com', [
-                'body' => json_encode([
-                    'price' => $payment->getAmount(),
-                    'currency' => $payment->getCurrencyCode(),
-                    'api_key' => "XXXX",
-                ]),
-            ]);
+            $xml = DataHelper::CreateSyliusShopRequestOrderQuote($payment, "", "", "", "", "");
+            var_dump($xml);
+            exit();
         } catch (RequestException $exception) {
             //$response = $exception->getResponse();
             //$payment->setDetails(['status' => $response->getStatusCode()]);
