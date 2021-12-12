@@ -1,0 +1,11 @@
+{% extends '@SyliusShop/layout.html.twig' %}
+
+{% block content %}
+
+    <div class="ui padded segment">
+        <form action="{{ actionUrl|default('') }}" method="POST">
+            <input type="text" value="dob" name="dob"><br>
+            <input type="submit" value="PAY">
+        </form>
+    </div>
+{% endblock %}

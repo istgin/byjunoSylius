@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Ij\SyliusByjunoPlugin\Action;
 
+use App\Entity\Payment\Payment;
+use Ij\SyliusByjunoPlugin\Api\DataHelper;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
@@ -17,6 +19,7 @@ use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Model\PaymentInterface;
 use Payum\Core\Request\Convert;
+use Sylius\Bundle\PayumBundle\Request\GetStatus;
 
 final class ConvertPaymentAction implements ActionInterface, GatewayAwareInterface
 {
@@ -29,32 +32,69 @@ final class ConvertPaymentAction implements ActionInterface, GatewayAwareInterfa
      */
     public function execute($request): void
     {
-        RequestNotSupportedException::assertSupports($this, $request);
-
-        /** @var PaymentInterface $payment */
-        $payment = $request->getSource();
-        $details = ArrayObject::ensureArrayObject($payment->getDetails());
-
-        $details['totalAmount'] = $payment->getTotalAmount();
-        $details['currencyCode'] = $payment->getCurrencyCode();
-        $details['extOrderId'] = uniqid((string) $payment->getNumber(), true);
-        $details['description'] = $payment->getDescription();
-        $details['client_email'] = $payment->getClientEmail();
-        $details['client_id'] = $payment->getClientId();
-        $details['customerIp'] = $this->getClientIp();
-        $details['status'] = OpenPayUBridge::NEW_API_STATUS;
-
-        $request->setResult((array) $details);
+        if ($request instanceof GetStatus && $request->getModel() instanceof Payment) {
+           // echo 'aaa';
+            $payment = $request->getModel();
+            $details = $payment->getDetails();
+            /** @var $payment  Payment*/
+            if ($details['byjyno_status'] == 2) {
+                $xml = DataHelper::CreateSyliusShopRequestOrderQuote($payment, "", "", "", "", "");
+                if (true) {
+                    $details['byjyno_status'] = 200;
+                    $request->markCaptured();
+                } else {
+                    $details['byjyno_status'] = 400;
+                    $request->markFailed();
+                }
+            }
+        } else {
+            echo 'ConvertPaymentAction<br>';
+            RequestNotSupportedException::assertSupports($this, $request);
+            /** @var PaymentInterface $payment */
+            $payment = $request->getSource();
+            $details = ArrayObject::ensureArrayObject($payment->getDetails());
+            if (!empty($details['byjyno_status']) && $details['byjyno_status'] == 2) {
+                exit('aaa');
+                // S1 & S2 goes here
+                //  $details['byjyno_status'] = 200;
+                //   $request->setResult((array) $details);
+            } else {
+                $details['totalAmount'] = $payment->getTotalAmount();
+                $details['currencyCode'] = $payment->getCurrencyCode();
+                $details['extOrderId'] = uniqid((string)$payment->getNumber(), true);
+                $details['description'] = $payment->getDescription();
+                $details['client_email'] = $payment->getClientEmail();
+                $details['client_id'] = $payment->getClientId();
+                $details['customerIp'] = $this->getClientIp();
+                $details['byjyno_status'] = 1;
+                $request->setResult((array)$details);
+            }
+        }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports($request): bool
+    public function supports($request)
     {
-        return $request instanceof Convert
-               && $request->getSource() instanceof PaymentInterface
-               && 'array' === $request->getTo();
+        if ($request instanceof Convert &&
+                $request->getSource() instanceof PaymentInterface &&
+                $request->getTo() == 'array')
+        {
+            return true;
+        }
+        if (
+                $request instanceof GetStatus && $request->getModel() instanceof Payment
+            ) {
+            $payment = $request->getModel();
+            $details = $payment->getDetails();
+            if (!empty($details['byjyno_status']) && $details['byjyno_status'] == 2) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 
     private function getClientIp(): ?string
