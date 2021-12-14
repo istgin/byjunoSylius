@@ -44,7 +44,7 @@ class ObtainTokenForCreditCardAction implements ActionInterface, GatewayAwareInt
      */
     public function execute($request)
     {
-        echo 'ObtainTokenForCreditCardAction<br>';
+       // echo 'ObtainTokenForCreditCardAction<br>';
         /** @var $request ObtainToken */
         RequestNotSupportedException::assertSupports($this, $request);
         $payment = $request->getModel();
@@ -71,7 +71,7 @@ class ObtainTokenForCreditCardAction implements ActionInterface, GatewayAwareInt
      */
     public function supports($request)
     {
-        echo "XXX===  ".get_class($request)." ---XXX";
+      //  echo "XXX===  ".get_class($request)." ---XXX";
         //$model = $request->getModel();
        // echo get_class($model);
         return

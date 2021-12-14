@@ -77,7 +77,7 @@ class CaptureAction implements ActionInterface, GatewayAwareInterface
 
         RequestNotSupportedException::assertSupports($this, $request);
         $model = ArrayObject::ensureArrayObject($request->getModel());
-        echo '<br>CaptureAction: '.$model['byjyno_status']."<br><br>";
+        //echo '<br>CaptureAction: '.$model['byjyno_status']."<br><br>";
         if (empty($model["byjyno_status"]) || $model['byjyno_status'] == 1) {
             $obtainToken = new ObtainToken($request->getToken());
             $obtainToken->setModel($model);

@@ -48,7 +48,7 @@ final class ConvertPaymentAction implements ActionInterface, GatewayAwareInterfa
                 }
             }
         } else {
-            echo 'ConvertPaymentAction<br>';
+            //echo 'ConvertPaymentAction<br>';
             RequestNotSupportedException::assertSupports($this, $request);
             /** @var PaymentInterface $payment */
             $payment = $request->getSource();

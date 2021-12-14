@@ -29,12 +29,12 @@ final class StatusAction implements ActionInterface
      */
     public function execute($request)
     {
-        echo 'StatusAction<br>';
+        //echo 'StatusAction<br>';
         RequestNotSupportedException::assertSupports($this, $request);
 
         $model = ArrayObject::ensureArrayObject($request->getModel());
         if (false == $model['byjyno_status'] || $model['byjyno_status'] == 1) {
-            echo '1';
+         //   echo '1';
             $request->markNew();
             return;
         }
@@ -44,13 +44,13 @@ final class StatusAction implements ActionInterface
         }
 
         if ($model['byjyno_status'] == 400) {
-            echo '3';
+            //echo '3';
             $request->markFailed();
             return;
         }
 
         if ($model['byjyno_status'] == 200) {
-            echo '4';
+          //  echo '4';
             $request->markAuthorized();
             return;
         }
