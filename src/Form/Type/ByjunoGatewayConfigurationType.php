@@ -92,6 +92,32 @@ final class ByjunoGatewayConfigurationType extends AbstractType
                 ]
             )
             ->add(
+                'payment_method',
+                ChoiceType::class,
+                [
+                    'choices' => [
+                        'byjuno.byjuno_plugin.payment_method_invoice' => "INVOICE",
+                        'byjuno.byjuno_plugin.payment_method_installment' => "INSTALLMENT",
+                    ],
+                    'label' => 'byjuno.byjuno_plugin.payment_method',
+                ]
+            )
+            ->add(
+                'repayment_type',
+                TextType::class,
+                [
+                    'label' => 'byjuno.byjuno_plugin.repayment_type',
+                    'constraints' => [
+                        new NotBlank(
+                            [
+                                'message' => 'byjuno.byjuno_plugin.gateway_configuration.repayment_type.not_blank',
+                                'groups' => ['sylius'],
+                            ]
+                        ),
+                    ],
+                ]
+            )
+            ->add(
                 'min_amount',
                 TextType::class,
                 [

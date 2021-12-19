@@ -43,12 +43,15 @@ final class ByjunoPaymentGatewayFactory extends GatewayFactory
         if (false === (bool) $config['payum.api']) {
             $config['payum.default_options'] = [
                 'gateway_name' => 'byjuno',
+                'mode' => 'test',
                 'client_id' => '',
                 'user_id' => '',
                 'password' => '',
                 'tech_email' => '',
-                'min_amount' => '',
-                'max_amount' => '',
+                'min_amount' => '1',
+                'max_amount' => '10000',
+                'payment_method' => 'INVOICE',
+                'repayment_type' => '',
             ];
             $config->defaults($config['payum.default_options']);
 
@@ -60,11 +63,14 @@ final class ByjunoPaymentGatewayFactory extends GatewayFactory
                 return [
                     'gateway_name' => $config['gateway_name'],
                     'client_id' => $config['client_id'],
+                    'mode' => $config['mode'],
                     'user_id' => $config['user_id'],
                     'password' => $config['password'],
                     'tech_email' => $config['tech_email'],
                     'min_amount' => $config['min_amount'],
-                    'max_amount' => $config['max_amount']
+                    'max_amount' => $config['max_amount'],
+                    'payment_method' => $config['payment_method'],
+                    'repayment_type' => $config['repayment_type']
                 ];
             };
         }

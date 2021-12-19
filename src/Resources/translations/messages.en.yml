@@ -5,3 +5,13 @@ byjuno:
         live: Production mode
         signature_key: Configuration key
         gateway_label: Byjuno
+        client_id: Client ID
+        user_id: User ID
+        password: Password
+        tech_email: Technical email contact
+        min_amount: Minimum amount to show payment method
+        max_amount: Maximum amount to show payment method
+        payment_method: Payment method type
+        payment_method_invoice: Invoice
+        payment_method_installment: Installment
+        repayment_type: Repayment type (number)

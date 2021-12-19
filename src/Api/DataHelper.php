@@ -84,9 +84,7 @@ class DataHelper {
     }
 
     /** @var SyliusPaymentInterface $payment */
-    public static function CreateSyliusShopRequestOrderQuote(Array $config, SyliusPaymentInterface $payment,
-                                                $paymentmethod,
-                                                $pref_lang)
+    public static function CreateSyliusShopRequestOrderQuote(Array $config, SyliusPaymentInterface $payment, $pref_lang)
     {
 
         var_dump($config);
@@ -269,13 +267,13 @@ class DataHelper {
         $extraInfo["Value"] = $requestId;
         $request->setExtraInfo($extraInfo);
 
-      //  $extraInfo["Name"] = 'PAYMENTMETHOD';
-     //   $extraInfo["Value"] = DataHelper::mapMethod($paymentmethod->getAdditionalInformation('payment_plan'));
-     //   $request->setExtraInfo($extraInfo);
+        $extraInfo["Name"] = 'PAYMENTMETHOD';
+        $extraInfo["Value"] = DataHelper::mapMethod($config["payment_method"]);
+        $request->setExtraInfo($extraInfo);
 
-     //   $extraInfo["Name"] = 'REPAYMENTTYPE';
-      //  $extraInfo["Value"] = DataHelper::mapRepayment($paymentmethod->getAdditionalInformation('payment_plan'));
-     //   $request->setExtraInfo($extraInfo);
+        $extraInfo["Name"] = 'REPAYMENTTYPE';
+        $extraInfo["Value"] = $config["repayment_type"];
+        $request->setExtraInfo($extraInfo);
 
         $extraInfo["Name"] = 'RISKOWNER';
         $extraInfo["Value"] = 'IJ';
