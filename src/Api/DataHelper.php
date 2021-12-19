@@ -7,6 +7,8 @@
  */
 namespace Ij\SyliusByjunoPlugin\Api;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoRequest;
 use Ij\SyliusByjunoPlugin\Entity\ByjunoLog;
 use Ij\SyliusByjunoPlugin\Repository\ByjunoLogRepository;
@@ -105,8 +107,7 @@ class DataHelper {
     /** @var SyliusPaymentInterface $payment */
     public static function CreateSyliusShopRequestOrderQuote(Array $config, SyliusPaymentInterface $payment, $pref_lang)
     {
-
-        var_dump($config);
+        //var_dump($config);
         /** @var $customer CustomerInterface */
         $customer = $payment->getOrder()->getCustomer();
         /** @var $billingAddress AddressInterface */
@@ -302,6 +303,22 @@ class DataHelper {
         $extraInfo["Value"] = 'Byjuno Sylius Module 1.0.0';
         $request->setExtraInfo($extraInfo);
         return $request;
+    }
+
+    public static function saveLog(EntityManagerInterface $em, ByjunoRequest $request, $xml_request, $xml_response, $status, $type)
+    {
+        /* @var $repo ByjunoLogRepository */
+        $repo = $em->getRepository(ByjunoLog::class);
+        $log = new ByjunoLog();
+        $log->setRequestId($request->getRequestId());
+        $log->setRequestType($type);
+        $log->setFirstname($request->getFirstName());
+        $log->setLastname($request->getLastName());
+        $log->setIP($_SERVER['REMOTE_ADDR']);
+        $log->setByjunoStatus((($status != "") ? $status . '' : 'Error'));
+        $log->setXmlRequest($xml_request);
+        $log->setXmlResponse($xml_response);
+        $repo->add($log);
     }
 
 }

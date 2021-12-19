@@ -11,9 +11,13 @@ declare(strict_types=1);
 namespace Ij\SyliusByjunoPlugin\Action;
 
 use App\Entity\Payment\Payment;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoCommunicator;
 use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoResponse;
 use Ij\SyliusByjunoPlugin\Api\DataHelper;
+use Ij\SyliusByjunoPlugin\Entity\ByjunoLog;
+use Ij\SyliusByjunoPlugin\Repository\ByjunoLogRepository;
 use Ij\SyliusByjunoPlugin\Repository\ByjunoLogTrait;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
@@ -29,9 +33,14 @@ use Sylius\Bundle\PayumBundle\Request\GetStatus;
 final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface
 {
     use GatewayAwareTrait;
-    use ByjunoLogTrait;
 
     public $config;
+    public $entityManager;
+
+    public function __construct(EntityManagerInterface $em)
+    {
+        $this->entityManager = $em;
+    }
 
     /**
      * {@inheritdoc}
@@ -46,6 +55,7 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
             $details = $payment->getDetails();
             /** @var $payment Payment*/
             if ($details['byjyno_status'] == 2) {
+                $statusLog = "CDP request (S1)";
                 $communicator = new ByjunoCommunicator();
                 $responseS2 = new ByjunoResponse();
                 $requestS2 = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, "de");
@@ -57,27 +67,19 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
                 }
 
                 $response = $communicator->sendRequest($xml, (int)30);
-                $status = 0;
-                exit('aaa');
-                $this->saveLog();
+                $statusS2 = 0;
                 if ($response) {
                     $responseS2->setRawResponse($response);
                     $responseS2->processResponse();
-                    $status = (int)$responseS2->getCustomerRequestStatus();
-                  //  $_internalDataHelper->saveLog($request, $xml, $response, $status, $ByjunoRequestName);
-                    if (intval($status) > 15) {
-                        $status = 0;
+                    $statusS2 = (int)$responseS2->getCustomerRequestStatus();
+                    DataHelper::saveLog($this->entityManager, $requestS2, $xml, $response, $statusS2, $statusLog);
+                    if (intval($statusS2) > 15) {
+                        $statusS2 = 0;
                     }
                 } else {
-
-                  //  $_internalDataHelper->saveLog($request, $xml, "empty response", "0", $ByjunoRequestName);
-                  //  if ($_internalDataHelper->_checkoutSession != null) {
-                  //      $_internalDataHelper->_checkoutSession->setS2Response("");
-                  //  }
+                    DataHelper::saveLog($this->entityManager, $requestS2, $xml, "empty response", "0", $statusLog);
                 }
-              //  var_dump($response, $status);
-               // exit('aaa');
-                if (DataHelper::byjunoIsStatusOk($status, $details['accept_s2'])) {
+                if (DataHelper::byjunoIsStatusOk($statusS2, $this->config['accept_s2'])) {
                     $details['byjyno_status'] = 200;
                     $request->markCaptured();
                 } else {

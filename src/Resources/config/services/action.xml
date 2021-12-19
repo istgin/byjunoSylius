@@ -22,6 +22,7 @@
         </service>
 
         <service id="byjuno.byjuno_plugin.action.convert_payment" class="Ij\SyliusByjunoPlugin\Action\ConvertPaymentAction">
+            <argument type="service" id="doctrine.orm.entity_manager" />
             <tag name="payum.action" factory="byjuno" alias="payum.action.convert_payment"/>
         </service>
 

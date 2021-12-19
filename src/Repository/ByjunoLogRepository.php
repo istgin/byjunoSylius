@@ -6,6 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Ij\SyliusByjunoPlugin\Entity\ByjunoLog;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 /**
  * @method ByjunoLog|null find($id, $lockMode = null, $lockVersion = null)
@@ -13,7 +14,7 @@ use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
  * @method ByjunoLog[]    findAll()
  * @method ByjunoLog[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ByjunoLogRepository extends EntityRepository
+class ByjunoLogRepository extends EntityRepository implements RepositoryInterface
 {
 
     // /**

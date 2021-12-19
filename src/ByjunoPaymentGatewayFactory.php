@@ -22,12 +22,12 @@ final class ByjunoPaymentGatewayFactory extends GatewayFactory
                 'payum.factory_title' => 'Byjuno',
                 'payum.template.obtain_token' => '@IjByjuno/payment.html.twig',
 
-                'payum.action.capture' => new CaptureAction(),
-                'payum.action.convert_payment' => new ConvertPaymentAction(),
-                'payum.action.status' => new StatusAction(),
-                'payum.action.obtain_token' => function (ArrayObject $config) {
-                    return new ObtainTokenForCreditCardAction($config['payum.template.obtain_token']);
-                },
+                #'payum.action.capture' => new CaptureAction(),
+                #'payum.action.convert_payment' => new ConvertPaymentAction(),
+                #'payum.action.status' => new StatusAction(),
+                #'payum.action.obtain_token' => function (ArrayObject $config) {
+                #    return new ObtainTokenForCreditCardAction($config['payum.template.obtain_token']);
+               # },
                 /*,
                 'payum.action.capture' => new CaptureAction(),
                 'payum.action.authorize' => new AuthorizeAction(),
