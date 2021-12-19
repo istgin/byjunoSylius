@@ -14,6 +14,7 @@ use App\Entity\Payment\Payment;
 use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoCommunicator;
 use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoResponse;
 use Ij\SyliusByjunoPlugin\Api\DataHelper;
+use Ij\SyliusByjunoPlugin\Repository\ByjunoLogTrait;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
@@ -28,6 +29,7 @@ use Sylius\Bundle\PayumBundle\Request\GetStatus;
 final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface
 {
     use GatewayAwareTrait;
+    use ByjunoLogTrait;
 
     public $config;
 
@@ -56,6 +58,8 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
 
                 $response = $communicator->sendRequest($xml, (int)30);
                 $status = 0;
+                exit('aaa');
+                $this->saveLog();
                 if ($response) {
                     $responseS2->setRawResponse($response);
                     $responseS2->processResponse();
@@ -65,6 +69,7 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
                         $status = 0;
                     }
                 } else {
+
                   //  $_internalDataHelper->saveLog($request, $xml, "empty response", "0", $ByjunoRequestName);
                   //  if ($_internalDataHelper->_checkoutSession != null) {
                   //      $_internalDataHelper->_checkoutSession->setS2Response("");

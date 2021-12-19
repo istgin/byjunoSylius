@@ -8,6 +8,8 @@
 namespace Ij\SyliusByjunoPlugin\Api;
 
 use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoRequest;
+use Ij\SyliusByjunoPlugin\Entity\ByjunoLog;
+use Ij\SyliusByjunoPlugin\Repository\ByjunoLogRepository;
 use Sylius\Component\Core\Model\AddressInterface;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 use Sylius\Component\Customer\Model\CustomerInterface;
@@ -301,4 +303,5 @@ class DataHelper {
         $request->setExtraInfo($extraInfo);
         return $request;
     }
+
 }
