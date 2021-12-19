@@ -12,7 +12,7 @@ trait ByjunoLogTrait
 
     public function __construct(ByjunoLogRepository $brandRepository)
     {
-        $this->brandRepository = $brandRepository;
+        $this->byjunoLogRepository = $brandRepository;
     }
 
     public function saveLog(): void

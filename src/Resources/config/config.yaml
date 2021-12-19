@@ -1,0 +1,51 @@
+sylius_resource:
+    resources:
+        byjuno.byjunolog:
+            driver: doctrine/orm # You can use also different driver here
+            classes:
+                model: Ij\SyliusByjunoPlugin\Entity\ByjunoLog
+                repository: Ij\SyliusByjunoPlugin\Repository\ByjunoLogRepository
+
+sylius_grid:
+    grids:
+        app_admin_byjunolog:
+            driver:
+                name: doctrine/orm
+                options:
+                    class: Ij\SyliusByjunoPlugin\Entity\ByjunoLog
+            fields:
+                requestid:
+                    type: string
+                    label: sylius.ui.requestid
+                requesttype:
+                    type: string
+                    label: sylius.ui.requesttype
+                firstname:
+                    type: string
+                    label: sylius.ui.firstname
+                lastname:
+                    type: string
+                    label: sylius.ui.lastname
+                ip:
+                    type: string
+                    label: sylius.ui.ip
+                byjunostatus:
+                    type: string
+                    label: sylius.ui.byjunostatus
+                # description:
+                #      type: string
+                #      label: sylius.ui.description
+                # enabled:
+                #      type: twig
+                #      label: sylius.ui.enabled
+                #      options:
+                #          template: "@SyliusUi/Grid/Field/enabled.html.twig"
+            actions:
+                #    main:
+                #       create:
+                #            type: create
+                item:
+                    update:
+                        type: update
+            #        delete:
+            #            type: delete

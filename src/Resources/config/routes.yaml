@@ -1,0 +1,14 @@
+app_admin_byjunolog:
+    resource: |
+        alias: byjuno.byjunolog
+        section: admin
+        templates: "@SyliusAdmin\\Crud"
+        redirect: update
+        grid: app_admin_byjunolog
+        vars:
+            all:
+                subheader: app.ui.supplier
+            index:
+                icon: 'file image outline'
+    type: sylius.resource
+    prefix: /admin

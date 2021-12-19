@@ -5,11 +5,12 @@ namespace Ij\SyliusByjunoPlugin\Entity;
 use DateTimeInterface;
 use Ij\SyliusByjunoPlugin\Repository\ByjunoLogRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Sylius\Component\Resource\Model\ResourceInterface;
 
 /**
  * @ORM\Entity(repositoryClass=ByjunoLogRepository::class)
  */
-class ByjunoLog
+class ByjunoLog implements ResourceInterface
 {
     /**
      * @ORM\Id
@@ -19,7 +20,7 @@ class ByjunoLog
     private $id;
 
     /**
-     * @var string
+     * @ORM\Column(name="requestid", type="string", precision=0, scale=0, nullable=false, unique=false)
      */
     protected $requestId;
 
@@ -34,7 +35,7 @@ class ByjunoLog
     }
 
     /**
-     * @var string
+     * @ORM\Column(name="requesttype", type="string", precision=0, scale=0, nullable=false, unique=false)
      */
     protected $requestType;
 
@@ -49,7 +50,7 @@ class ByjunoLog
     }
 
     /**
-     * @var string
+     * @ORM\Column(name="firstname", type="string", precision=0, scale=0, nullable=false, unique=false)
      */
     protected $firstname;
 
@@ -64,7 +65,7 @@ class ByjunoLog
     }
 
     /**
-     * @var string
+     * @ORM\Column(name="lastname", type="string", precision=0, scale=0, nullable=false, unique=false)
      */
     protected $lastname;
 
@@ -79,7 +80,7 @@ class ByjunoLog
     }
 
     /**
-     * @var string
+     * @ORM\Column(name="ip", type="string", precision=0, scale=0, nullable=false, unique=false)
      */
     protected $ip;
 
@@ -94,7 +95,7 @@ class ByjunoLog
     }
 
     /**
-     * @var string
+     * @ORM\Column(name="byjunostatus", type="string", precision=0, scale=0, nullable=false, unique=false)
      */
     protected $byjunoStatus;
 
@@ -136,5 +137,11 @@ class ByjunoLog
     public function setXmlResponse(string $xmlResponse): void
     {
         $this->xmlResponse = $xmlResponse;
+    }
+
+    /** @psalm-suppress MissingReturnType */
+    public function getId()
+    {
+       return $this->id;
     }
 }
