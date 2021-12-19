@@ -84,14 +84,12 @@ class DataHelper {
     }
 
     /** @var SyliusPaymentInterface $payment */
-    public static function CreateSyliusShopRequestOrderQuote(SyliusPaymentInterface $payment,
+    public static function CreateSyliusShopRequestOrderQuote(Array $config, SyliusPaymentInterface $payment,
                                                 $paymentmethod,
-                                                $gender_custom,
-                                                $dob_custom,
-                                                $pref_lang,
-                                                $b2b_uid)
+                                                $pref_lang)
     {
 
+        var_dump($config);
         /** @var $customer CustomerInterface */
         $customer = $payment->getOrder()->getCustomer();
         /** @var $billingAddress AddressInterface */
@@ -99,12 +97,12 @@ class DataHelper {
         /** @var $shippingAddress AddressInterface */
         $shippingAddress = $payment->getOrder()->getShippingAddress();
         $request = new ByjunoRequest();
-     //   $request->setClientId($this->_scopeConfig->getValue('byjunocheckoutsettings/byjuno_setup/clientid', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $webshopProfile));
-     //   $request->setUserID($this->_scopeConfig->getValue('byjunocheckoutsettings/byjuno_setup/userid', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $webshopProfile));
-    //    $request->setPassword($this->_scopeConfig->getValue('byjunocheckoutsettings/byjuno_setup/password', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $webshopProfile));
+        $request->setClientId($config["client_id"]);
+        $request->setUserID($config["user_id"]);
+        $request->setPassword($config["password"]);
         $request->setVersion("1.00");
         try {
-     //      $request->setRequestEmail($this->_scopeConfig->getValue('byjunocheckoutsettings/byjuno_setup/mail', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $webshopProfile));
+           $request->setRequestEmail($config["tech_email"]);
         } catch (\Exception $e) {
 
         }
@@ -147,6 +145,8 @@ class DataHelper {
             }
         }
 
+        // Custom gender
+        /*
         if (!empty($gender_custom)) {
             if (in_array(strtolower($gender_custom), $gender_male_possible_prefix)) {
                 $request->setGender('1');
@@ -154,6 +154,7 @@ class DataHelper {
                 $request->setGender('2');
             }
         }
+        */
 
         $billingStreet = $billingAddress->getStreet();
         $requestId = uniqid((String)$billingAddress->getId() . "_");

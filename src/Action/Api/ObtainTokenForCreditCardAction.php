@@ -71,9 +71,6 @@ class ObtainTokenForCreditCardAction implements ActionInterface, GatewayAwareInt
      */
     public function supports($request)
     {
-      //  echo "XXX===  ".get_class($request)." ---XXX";
-        //$model = $request->getModel();
-       // echo get_class($model);
         return
             $request instanceof ObtainToken &&
             $request->getModel() instanceof ArrayObject

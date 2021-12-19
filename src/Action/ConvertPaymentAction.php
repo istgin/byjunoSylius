@@ -13,17 +13,21 @@ namespace Ij\SyliusByjunoPlugin\Action;
 use App\Entity\Payment\Payment;
 use Ij\SyliusByjunoPlugin\Api\DataHelper;
 use Payum\Core\Action\ActionInterface;
+use Payum\Core\ApiAwareInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
+use Payum\Core\Exception\UnsupportedApiException;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Model\PaymentInterface;
 use Payum\Core\Request\Convert;
 use Sylius\Bundle\PayumBundle\Request\GetStatus;
 
-final class ConvertPaymentAction implements ActionInterface, GatewayAwareInterface
+final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface
 {
     use GatewayAwareTrait;
+
+    public $config;
 
     /**
      * {@inheritdoc}
@@ -36,9 +40,10 @@ final class ConvertPaymentAction implements ActionInterface, GatewayAwareInterfa
            // echo 'aaa';
             $payment = $request->getModel();
             $details = $payment->getDetails();
-            /** @var $payment  Payment*/
+            /** @var $payment Payment*/
             if ($details['byjyno_status'] == 2) {
-                $xml = DataHelper::CreateSyliusShopRequestOrderQuote($payment, "", "", "", "", "");
+                $xml = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, "", "", "", "", "");
+                exit('aaa');
                 if (true) {
                     $details['byjyno_status'] = 200;
                     $request->markCaptured();
@@ -70,6 +75,14 @@ final class ConvertPaymentAction implements ActionInterface, GatewayAwareInterfa
                 $request->setResult((array)$details);
             }
         }
+    }
+
+    public function setApi($config): void
+    {
+        if (false === is_array($config)) {
+            throw new UnsupportedApiException('Not supported. Expected to be set as array.');
+        }
+        $this->config = $config;
     }
 
     /**
