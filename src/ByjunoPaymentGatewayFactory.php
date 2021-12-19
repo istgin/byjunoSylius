@@ -52,6 +52,10 @@ final class ByjunoPaymentGatewayFactory extends GatewayFactory
                 'max_amount' => '10000',
                 'payment_method' => 'INVOICE',
                 'repayment_type' => '',
+                'accept_s2' => '2',
+                'accept_s2_ij' => '',
+                'accept_s3' => '2',
+                'accept_cdp' => '2',
             ];
             $config->defaults($config['payum.default_options']);
 
@@ -70,7 +74,11 @@ final class ByjunoPaymentGatewayFactory extends GatewayFactory
                     'min_amount' => $config['min_amount'],
                     'max_amount' => $config['max_amount'],
                     'payment_method' => $config['payment_method'],
-                    'repayment_type' => $config['repayment_type']
+                    'repayment_type' => $config['repayment_type'],
+                    'accept_s2' => $config['accept_s2'],
+                    'accept_s2_ij' => $config['accept_s2_ij'],
+                    'accept_s3' => $config['accept_s3'],
+                    'accept_cdp' => $config['accept_cdp']
                 ];
             };
         }

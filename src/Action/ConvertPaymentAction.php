@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace Ij\SyliusByjunoPlugin\Action;
 
 use App\Entity\Payment\Payment;
+use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoCommunicator;
+use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoResponse;
 use Ij\SyliusByjunoPlugin\Api\DataHelper;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
@@ -42,9 +44,35 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
             $details = $payment->getDetails();
             /** @var $payment Payment*/
             if ($details['byjyno_status'] == 2) {
-                $xml = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, "", "", "", "", "");
-                exit('aaa');
-                if (true) {
+                $communicator = new ByjunoCommunicator();
+                $responseS2 = new ByjunoResponse();
+                $requestS2 = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, "de");
+                $xml = $requestS2->createRequest();
+                if ($this->config["mode"] == 'live') {
+                    $communicator->setServer('live');
+                } else {
+                    $communicator->setServer('test');
+                }
+
+                $response = $communicator->sendRequest($xml, (int)30);
+                $status = 0;
+                if ($response) {
+                    $responseS2->setRawResponse($response);
+                    $responseS2->processResponse();
+                    $status = (int)$responseS2->getCustomerRequestStatus();
+                  //  $_internalDataHelper->saveLog($request, $xml, $response, $status, $ByjunoRequestName);
+                    if (intval($status) > 15) {
+                        $status = 0;
+                    }
+                } else {
+                  //  $_internalDataHelper->saveLog($request, $xml, "empty response", "0", $ByjunoRequestName);
+                  //  if ($_internalDataHelper->_checkoutSession != null) {
+                  //      $_internalDataHelper->_checkoutSession->setS2Response("");
+                  //  }
+                }
+              //  var_dump($response, $status);
+               // exit('aaa');
+                if (DataHelper::byjunoIsStatusOk($status, $details['accept_s2'])) {
                     $details['byjyno_status'] = 200;
                     $request->markCaptured();
                 } else {

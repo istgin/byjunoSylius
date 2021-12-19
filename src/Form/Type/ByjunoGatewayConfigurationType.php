@@ -146,6 +146,58 @@ final class ByjunoGatewayConfigurationType extends AbstractType
                         ),
                     ],
                 ]
+            )
+            ->add(
+                'accept_s2',
+                TextType::class,
+                [
+                    'label' => 'byjuno.byjuno_plugin.accept_s2',
+                    'constraints' => [
+                        new NotBlank(
+                            [
+                                'message' => 'byjuno.byjuno_plugin.gateway_configuration.accept_s2.not_blank',
+                                'groups' => ['sylius'],
+                            ]
+                        ),
+                    ],
+                ]
+            )
+            ->add(
+                'accept_s2_ij',
+                TextType::class,
+                [
+                    'label' => 'byjuno.byjuno_plugin.accept_s2_ij'
+                ]
+            )
+            ->add(
+                'accept_s3',
+                TextType::class,
+                [
+                    'label' => 'byjuno.byjuno_plugin.accept_s3',
+                    'constraints' => [
+                        new NotBlank(
+                            [
+                                'message' => 'byjuno.byjuno_plugin.gateway_configuration.accept_s3.not_blank',
+                                'groups' => ['sylius'],
+                            ]
+                        ),
+                    ],
+                ]
+            )
+            ->add(
+                'accept_cdp',
+                TextType::class,
+                [
+                    'label' => 'byjuno.byjuno_plugin.accept_cdp',
+                    'constraints' => [
+                        new NotBlank(
+                            [
+                                'message' => 'byjuno.byjuno_plugin.gateway_configuration.accept_cdp.not_blank',
+                                'groups' => ['sylius'],
+                            ]
+                        ),
+                    ],
+                ]
             );
     }
 }

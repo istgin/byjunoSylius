@@ -83,6 +83,23 @@ class DataHelper {
         return "0";
     }
 
+    public static function byjunoIsStatusOk($status, $config)
+    {
+        try {
+            if ($config === "")
+            {
+                return false;
+            }
+            $stateArray = explode(",", $config);
+            if (in_array($status, $stateArray)) {
+                return true;
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     /** @var SyliusPaymentInterface $payment */
     public static function CreateSyliusShopRequestOrderQuote(Array $config, SyliusPaymentInterface $payment, $pref_lang)
     {
