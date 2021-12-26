@@ -309,10 +309,6 @@ class DataHelper {
         $extraInfo["Value"] = $config["repayment_type"];
         $request->setExtraInfo($extraInfo);
 
-        $extraInfo["Name"] = 'RISKOWNER';
-        $extraInfo["Value"] = 'IJ';
-        $request->setExtraInfo($extraInfo);
-
         if (!empty($orderId)) {
             $extraInfo["Name"] = 'ORDERID';
             $extraInfo["Value"] = $orderId;

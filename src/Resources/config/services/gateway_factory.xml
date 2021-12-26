@@ -17,6 +17,7 @@
             id="Ij\SyliusByjunoPlugin\Resolver\ByjunoPaymentMethodsResolver"
             decorates="sylius.payment_methods_resolver"
         >
+            <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="Ij\SyliusByjunoPlugin\Resolver\ByjunoPaymentMethodsResolver.inner" />
             <argument>%sylius.byjuno.prioritized_factory_name%</argument>
         </service>

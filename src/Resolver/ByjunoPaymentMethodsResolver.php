@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Ij\SyliusByjunoPlugin\Resolver;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoCommunicator;
+use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoResponse;
+use Ij\SyliusByjunoPlugin\Api\DataHelper;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Payment\Model\PaymentInterface as BasePaymentInterface;
 use Sylius\Component\Payment\Resolver\PaymentMethodsResolverInterface;
@@ -13,11 +17,16 @@ final class ByjunoPaymentMethodsResolver implements PaymentMethodsResolverInterf
     private PaymentMethodsResolverInterface $decoratedPaymentMethodsResolver;
 
     private string $firstPaymentMethodFactoryName;
+    private $entityManager;
 
-    public function __construct(PaymentMethodsResolverInterface $decoratedPaymentMethodsResolver, string $firstPaymentMethodFactoryName)
+    public function __construct(
+        EntityManagerInterface $em,
+        PaymentMethodsResolverInterface $decoratedPaymentMethodsResolver,
+        string $firstPaymentMethodFactoryName)
     {
         $this->decoratedPaymentMethodsResolver = $decoratedPaymentMethodsResolver;
         $this->firstPaymentMethodFactoryName = $firstPaymentMethodFactoryName;
+        $this->entityManager = $em;
     }
 
 /*
@@ -40,7 +49,32 @@ final class ByjunoPaymentMethodsResolver implements PaymentMethodsResolverInterf
                 if ($minAmount > $orderAmount || $maxAmount < $orderAmount) {
                     return false;
                 }
-                return true;
+                /* @var $payment \App\Entity\Payment\Payment */
+                $payment = $subject;
+                $requestCDP = DataHelper::CreateSyliusShopRequestOrderQuote($paymentMethod->getGatewayConfig()->getConfig(), $payment, "de", "", "", "", "", "NO");
+                $statusLogCDP = "CDP request";
+                $responseCDP = new ByjunoResponse();
+                $communicator = new ByjunoCommunicator();
+                $xmlCDP = $requestCDP->createRequest();
+                $responseOnCDP = $communicator->sendRequest($xmlCDP, (int)30);
+                $statusCDP = 0;
+                if ($responseOnCDP) {
+                    $responseCDP->setRawResponse($responseOnCDP);
+                    $responseCDP->processResponse();
+                    $statusCDP = (int)$responseCDP->getCustomerRequestStatus();
+                    if (intval($statusCDP) > 15) {
+                        $statusCDP = 0;
+                    }
+                    DataHelper::saveLog($this->entityManager, $requestCDP, $xmlCDP, $responseOnCDP, $statusCDP, $statusLogCDP);
+                } else {
+                    DataHelper::saveLog($this->entityManager, $requestCDP, $xmlCDP, "empty response", "0", $statusLogCDP);
+                }
+
+                if (DataHelper::byjunoIsStatusOk($statusCDP, $paymentMethod->getGatewayConfig()->getConfig()['accept_cdp'])) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
             return true;
         });
