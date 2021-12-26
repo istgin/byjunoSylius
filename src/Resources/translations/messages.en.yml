@@ -19,6 +19,9 @@ byjuno:
         accept_s2_client: S2 allowed client risk statuses
         accept_s3: S3 allowed statuses
         accept_cdp: CDP allowed statuses
+        cdp_enabled: Enabled credit check to show payment method
+        cdp_enabled_yes: Yes
+        cdp_enabled_no: No
     ui:
         byjunologs: Byjuno logs
         requestid: Request id

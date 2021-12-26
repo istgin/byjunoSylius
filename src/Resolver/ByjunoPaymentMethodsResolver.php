@@ -49,12 +49,20 @@ final class ByjunoPaymentMethodsResolver implements PaymentMethodsResolverInterf
                 if ($minAmount > $orderAmount || $maxAmount < $orderAmount) {
                     return false;
                 }
+                if ($paymentMethod->getGatewayConfig()->getConfig()["cdp_enabled"] != "yes") {
+                    return true;
+                }
                 $statusCDP = 0;
+                /* @var $payment \App\Entity\Payment\Payment */
+                $payment = $subject;
+                $orderId = $payment->getOrder()->getId();
+                if (empty($_SESSION["BYJUNO_CDP_ORDER"]) || $_SESSION["BYJUNO_CDP_ORDER"] != $orderId) {
+                    $_SESSION["BYJUNO_CDP_COMPLETED"] = null;
+                }
+                $_SESSION["BYJUNO_CDP_ORDER"] = $orderId;
                 if (isset($_SESSION["BYJUNO_CDP_COMPLETED"]) && $_SESSION["BYJUNO_CDP_COMPLETED"] != -1) {
                     $statusCDP = $_SESSION["BYJUNO_CDP_COMPLETED"];
                 } else {
-                    /* @var $payment \App\Entity\Payment\Payment */
-                    $payment = $subject;
                     $requestCDP = DataHelper::CreateSyliusShopRequestOrderQuote($paymentMethod->getGatewayConfig()->getConfig(), $payment, "de", "", "", "", "", "CDP", "NO");
                     $statusLogCDP = "CDP request";
                     $responseCDP = new ByjunoResponse();

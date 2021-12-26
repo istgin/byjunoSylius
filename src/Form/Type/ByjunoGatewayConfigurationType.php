@@ -185,6 +185,17 @@ final class ByjunoGatewayConfigurationType extends AbstractType
                 ]
             )
             ->add(
+                'cdp_enabled',
+                ChoiceType::class,
+                [
+                    'choices' => [
+                        'byjuno.byjuno_plugin.cdp_enabled_yes' => "yes",
+                        'byjuno.byjuno_plugin.cdp_enabled_no' => "no",
+                    ],
+                    'label' => 'byjuno.byjuno_plugin.cdp_enabled',
+                ]
+            )
+            ->add(
                 'accept_cdp',
                 TextType::class,
                 [
