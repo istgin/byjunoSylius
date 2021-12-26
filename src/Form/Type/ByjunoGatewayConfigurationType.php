@@ -148,14 +148,14 @@ final class ByjunoGatewayConfigurationType extends AbstractType
                 ]
             )
             ->add(
-                'accept_s2',
+                'accept_s2_ij',
                 TextType::class,
                 [
-                    'label' => 'byjuno.byjuno_plugin.accept_s2',
+                    'label' => 'byjuno.byjuno_plugin.accept_s2_ij',
                     'constraints' => [
                         new NotBlank(
                             [
-                                'message' => 'byjuno.byjuno_plugin.gateway_configuration.accept_s2.not_blank',
+                                'message' => 'byjuno.byjuno_plugin.gateway_configuration.accept_s2_ij.not_blank',
                                 'groups' => ['sylius'],
                             ]
                         ),
@@ -163,10 +163,10 @@ final class ByjunoGatewayConfigurationType extends AbstractType
                 ]
             )
             ->add(
-                'accept_s2_ij',
+                'accept_s2_client',
                 TextType::class,
                 [
-                    'label' => 'byjuno.byjuno_plugin.accept_s2_ij'
+                    'label' => 'byjuno.byjuno_plugin.accept_s2_client'
                 ]
             )
             ->add(

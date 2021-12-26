@@ -52,8 +52,8 @@ final class ByjunoPaymentGatewayFactory extends GatewayFactory
                 'max_amount' => '10000',
                 'payment_method' => 'INVOICE',
                 'repayment_type' => '',
-                'accept_s2' => '2',
-                'accept_s2_ij' => '',
+                'accept_s2_ij' => '2',
+                'accept_s2_client' => '',
                 'accept_s3' => '2',
                 'accept_cdp' => '2',
             ];
@@ -75,8 +75,8 @@ final class ByjunoPaymentGatewayFactory extends GatewayFactory
                     'max_amount' => $config['max_amount'],
                     'payment_method' => $config['payment_method'],
                     'repayment_type' => $config['repayment_type'],
-                    'accept_s2' => $config['accept_s2'],
                     'accept_s2_ij' => $config['accept_s2_ij'],
+                    'accept_s2_client' => $config['accept_s2_client'],
                     'accept_s3' => $config['accept_s3'],
                     'accept_cdp' => $config['accept_cdp']
                 ];

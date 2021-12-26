@@ -15,3 +15,17 @@ byjuno:
         payment_method_invoice: Invoice
         payment_method_installment: Installment
         repayment_type: Repayment type (number)
+        accept_s2_ij: S2 allowed Intrum risk statuses
+        accept_s2_client: S2 allowed client risk statuses
+        accept_s3: S3 allowed statuses
+        accept_cdp: CDP allowed statuses
+    ui:
+        byjunologs: Byjuno logs
+        requestid: Request id
+        requesttype: Request type
+        firstname: First name
+        lastname: Last name
+        byjunostatus: Byjuno status
+        ip: Ip
+        id: ID
+        

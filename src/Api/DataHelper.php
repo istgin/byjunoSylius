@@ -7,6 +7,7 @@
  */
 namespace Ij\SyliusByjunoPlugin\Api;
 
+use DateTimeInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoRequest;
@@ -104,8 +105,21 @@ class DataHelper {
         }
     }
 
-    /** @var SyliusPaymentInterface $payment */
-    public static function CreateSyliusShopRequestOrderQuote(Array $config, SyliusPaymentInterface $payment, $pref_lang)
+    /**
+     * @param array $config
+     * @param SyliusPaymentInterface $payment
+     * @param $pref_lang
+     * @param string $riskOwner
+     * @param string $orderId
+     * @param string $invoiceDelivery
+     * @param string $transactionNumber
+     * @param string $orderClosed
+     * @return ByjunoRequest
+     * @throws \Exception
+     */
+    public static function CreateSyliusShopRequestOrderQuote(Array $config, SyliusPaymentInterface $payment, $pref_lang, $riskOwner = "",
+                                                             $orderId = "", $invoiceDelivery = "",
+                                                             $transactionNumber = "", $orderClosed = "NO")
     {
         //var_dump($config);
         /** @var $customer CustomerInterface */
@@ -199,7 +213,7 @@ class DataHelper {
         $request->setEmail((String)$customer->getEmail());
 
         $extraInfo["Name"] = 'ORDERCLOSED';
-        $extraInfo["Value"] = 'NO';
+        $extraInfo["Value"] = $orderClosed;
         $request->setExtraInfo($extraInfo);
 
         $extraInfo["Name"] = 'ORDERAMOUNT';
@@ -299,9 +313,34 @@ class DataHelper {
         $extraInfo["Value"] = 'IJ';
         $request->setExtraInfo($extraInfo);
 
+        if (!empty($orderId)) {
+            $extraInfo["Name"] = 'ORDERID';
+            $extraInfo["Value"] = $orderId;
+            $request->setExtraInfo($extraInfo);
+        }
+
+        if ($riskOwner != "") {
+            $extraInfo["Name"] = 'RISKOWNER';
+            $extraInfo["Value"] = $riskOwner;
+            $request->setExtraInfo($extraInfo);
+        }
+
+        if ($invoiceDelivery == 'postal') {
+            $extraInfo["Name"] = 'PAPER_INVOICE';
+            $extraInfo["Value"] = 'YES';
+            $request->setExtraInfo($extraInfo);
+        }
+
+        if ($transactionNumber != "") {
+            $extraInfo["Name"] = 'TRANSACTIONNUMBER';
+            $extraInfo["Value"] = $transactionNumber;
+            $request->setExtraInfo($extraInfo);
+        }
+
         $extraInfo["Name"] = 'CONNECTIVTY_MODULE';
         $extraInfo["Value"] = 'Byjuno Sylius Module 1.0.0';
         $request->setExtraInfo($extraInfo);
+
         return $request;
     }
 

@@ -13,25 +13,31 @@ sylius_grid:
                 name: doctrine/orm
                 options:
                     class: Ij\SyliusByjunoPlugin\Entity\ByjunoLog
+            sorting:
+                id: desc
             fields:
+                id:
+                    type: string
+                    label: byjuno.ui.id
+                    sortable: ~
                 requestid:
                     type: string
-                    label: sylius.ui.requestid
+                    label: byjuno.ui.requestid
                 requesttype:
                     type: string
-                    label: sylius.ui.requesttype
+                    label: byjuno.ui.requesttype
                 firstname:
                     type: string
-                    label: sylius.ui.firstname
+                    label: byjuno.ui.firstname
                 lastname:
                     type: string
-                    label: sylius.ui.lastname
+                    label: byjuno.ui.lastname
                 ip:
                     type: string
-                    label: sylius.ui.ip
+                    label: byjuno.ui.ip
                 byjunostatus:
                     type: string
-                    label: sylius.ui.byjunostatus
+                    label: byjuno.ui.byjunostatus
                 # description:
                 #      type: string
                 #      label: sylius.ui.description

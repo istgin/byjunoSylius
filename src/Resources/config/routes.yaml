@@ -7,7 +7,7 @@ app_admin_byjunolog:
         grid: app_admin_byjunolog
         vars:
             all:
-                subheader: app.ui.supplier
+                subheader: byjuno.ui.byjunologs
             index:
                 icon: 'file image outline'
     type: sylius.resource
