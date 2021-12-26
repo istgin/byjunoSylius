@@ -49,25 +49,30 @@ final class ByjunoPaymentMethodsResolver implements PaymentMethodsResolverInterf
                 if ($minAmount > $orderAmount || $maxAmount < $orderAmount) {
                     return false;
                 }
-                /* @var $payment \App\Entity\Payment\Payment */
-                $payment = $subject;
-                $requestCDP = DataHelper::CreateSyliusShopRequestOrderQuote($paymentMethod->getGatewayConfig()->getConfig(), $payment, "de", "", "", "", "", "NO");
-                $statusLogCDP = "CDP request";
-                $responseCDP = new ByjunoResponse();
-                $communicator = new ByjunoCommunicator();
-                $xmlCDP = $requestCDP->createRequest();
-                $responseOnCDP = $communicator->sendRequest($xmlCDP, (int)30);
                 $statusCDP = 0;
-                if ($responseOnCDP) {
-                    $responseCDP->setRawResponse($responseOnCDP);
-                    $responseCDP->processResponse();
-                    $statusCDP = (int)$responseCDP->getCustomerRequestStatus();
-                    if (intval($statusCDP) > 15) {
-                        $statusCDP = 0;
-                    }
-                    DataHelper::saveLog($this->entityManager, $requestCDP, $xmlCDP, $responseOnCDP, $statusCDP, $statusLogCDP);
+                if (isset($_SESSION["BYJUNO_CDP_COMPLETED"]) && $_SESSION["BYJUNO_CDP_COMPLETED"] != -1) {
+                    $statusCDP = $_SESSION["BYJUNO_CDP_COMPLETED"];
                 } else {
-                    DataHelper::saveLog($this->entityManager, $requestCDP, $xmlCDP, "empty response", "0", $statusLogCDP);
+                    /* @var $payment \App\Entity\Payment\Payment */
+                    $payment = $subject;
+                    $requestCDP = DataHelper::CreateSyliusShopRequestOrderQuote($paymentMethod->getGatewayConfig()->getConfig(), $payment, "de", "", "", "", "", "CDP", "NO");
+                    $statusLogCDP = "CDP request";
+                    $responseCDP = new ByjunoResponse();
+                    $communicator = new ByjunoCommunicator();
+                    $xmlCDP = $requestCDP->createRequest();
+                    $responseOnCDP = $communicator->sendRequest($xmlCDP, (int)30);
+                    if ($responseOnCDP) {
+                        $responseCDP->setRawResponse($responseOnCDP);
+                        $responseCDP->processResponse();
+                        $statusCDP = (int)$responseCDP->getCustomerRequestStatus();
+                        if (intval($statusCDP) > 15) {
+                            $statusCDP = 0;
+                        }
+                        DataHelper::saveLog($this->entityManager, $requestCDP, $xmlCDP, $responseOnCDP, $statusCDP, $statusLogCDP);
+                    } else {
+                        DataHelper::saveLog($this->entityManager, $requestCDP, $xmlCDP, "empty response", "0", $statusLogCDP);
+                    }
+                    $_SESSION["BYJUNO_CDP_COMPLETED"] = $statusCDP;
                 }
 
                 if (DataHelper::byjunoIsStatusOk($statusCDP, $paymentMethod->getGatewayConfig()->getConfig()['accept_cdp'])) {

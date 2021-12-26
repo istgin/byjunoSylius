@@ -119,7 +119,8 @@ class DataHelper {
      */
     public static function CreateSyliusShopRequestOrderQuote(Array $config, SyliusPaymentInterface $payment, $pref_lang, $riskOwner = "",
                                                              $orderId = "", $invoiceDelivery = "",
-                                                             $transactionNumber = "", $orderClosed = "NO")
+                                                             $transactionNumber = "", $isCDP = "",
+                                                             $orderClosed = "NO")
     {
         //var_dump($config);
         /** @var $customer CustomerInterface */
@@ -330,6 +331,11 @@ class DataHelper {
         if ($transactionNumber != "") {
             $extraInfo["Name"] = 'TRANSACTIONNUMBER';
             $extraInfo["Value"] = $transactionNumber;
+            $request->setExtraInfo($extraInfo);
+        }
+        if ($isCDP != "") {
+            $extraInfo["Name"] = 'MESSAGETYPESPEC';
+            $extraInfo["Value"] = 'CREDITCHECK';
             $request->setExtraInfo($extraInfo);
         }
 

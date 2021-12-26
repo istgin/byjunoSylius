@@ -19,6 +19,7 @@ use Ij\SyliusByjunoPlugin\Api\DataHelper;
 use Ij\SyliusByjunoPlugin\Entity\ByjunoLog;
 use Ij\SyliusByjunoPlugin\Repository\ByjunoLogRepository;
 use Ij\SyliusByjunoPlugin\Repository\ByjunoLogTrait;
+use mysql_xdevapi\Exception;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
@@ -36,6 +37,8 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
 
     public $config;
     public $entityManager;
+    private $s2Status = -1;
+    private $s3Status = -1;
 
     public function __construct(EntityManagerInterface $em)
     {
@@ -51,71 +54,91 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
     public function execute($request): void
     {
         if ($request instanceof GetStatus && $request->getModel() instanceof Payment) {
-           // echo 'aaa';
             $payment = $request->getModel();
             $details = $payment->getDetails();
             /** @var $payment Payment*/
             if ($details['byjyno_status'] == 2) {
-                $statusLogS1 = "CDP request (S1)";
-                $communicator = new ByjunoCommunicator();
-                $responseS2 = new ByjunoResponse();
-                $requestS1 = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, "de", "", "", "", "", "NO");
-                $xml = $requestS1->createRequest();
-                if ($this->config["mode"] == 'live') {
-                    $communicator->setServer('live');
-                } else {
-                    $communicator->setServer('test');
-                }
-
-                $responseOnS1 = $communicator->sendRequest($xml, (int)30);
-                $statusS2 = 0;
-                if ($responseOnS1) {
-                    $responseS2->setRawResponse($responseOnS1);
-                    $responseS2->processResponse();
-                    $statusS2 = (int)$responseS2->getCustomerRequestStatus();
-                    DataHelper::saveLog($this->entityManager, $requestS1, $xml, $responseOnS1, $statusS2, $statusLogS1);
-                    if (intval($statusS2) > 15) {
-                        $statusS2 = 0;
+                $_SESSION["BYJUNO_CDP_COMPLETED"] = -1;
+                if ($this->s2Status >= 0) {
+                    if (DataHelper::byjunoIsStatusOk($this->s2Status, $this->config['accept_s2_ij'])) {
+                        $riskOwner = "IJ";
+                    } else if (DataHelper::byjunoIsStatusOk($this->s2Status, $this->config['accept_s2_client'])) {
+                        $riskOwner = "CLIENT";
                     }
-                } else {
-                    DataHelper::saveLog($this->entityManager, $requestS1, $xml, "empty response", "0", $statusLogS1);
-                }
-                $riskOwner = "";
-                if (DataHelper::byjunoIsStatusOk($statusS2, $this->config['accept_s2_ij'])) {
-                    $riskOwner = "IJ";
-                } else if (DataHelper::byjunoIsStatusOk($statusS2, $this->config['accept_s2_client'])) {
-                    $riskOwner = "CLIENT";
-                }
-                if ($riskOwner == "") {
-                    $details['byjyno_status'] = 400;
-                    $request->markFailed();
-                } else {
-                    //S3
-                    $statusLogS3 = "CDP request (S3)";
-                    $responseS3 = new ByjunoResponse();
-                    $orderId = $payment->getOrder()->getId();
-                    $requestS3 = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, "de", $riskOwner, $orderId, "", $responseS2->getTransactionNumber(), "YES");
-                    $xmlS3 = $requestS3->createRequest();
-                    $responseOnS3 = $communicator->sendRequest($xmlS3, (int)30);
-                    $statusS3 = 0;
-                    if ($responseOnS3) {
-                        $responseS3->setRawResponse($responseOnS3);
-                        $responseS3->processResponse();
-                        $statusS3 = (int)$responseS3->getCustomerRequestStatus();
-                        DataHelper::saveLog($this->entityManager, $requestS3, $xmlS3, $responseOnS3, $statusS3, $statusLogS3);
-                        if (intval($statusS3) > 15) {
-                            $statusS3 = 0;
-                        }
-                    } else {
-                        DataHelper::saveLog($this->entityManager, $requestS3, $xmlS3, "empty response", "0", $statusLogS3);
-                    }
-
-                    if (DataHelper::byjunoIsStatusOk($statusS3, $this->config['accept_s3'])) {
-                        $details['byjyno_status'] = 200;
-                        $request->markCaptured();
-                    } else {
+                    if ($riskOwner == "" || $this->s3Status == -1) {
                         $details['byjyno_status'] = 400;
                         $request->markFailed();
+                    } else {
+                        if (DataHelper::byjunoIsStatusOk($this->s3Status, $this->config['accept_s3'])) {
+                            $details['byjyno_status'] = 200;
+                            $request->markCaptured();
+                        } else {
+                            $details['byjyno_status'] = 400;
+                            $request->markFailed();
+                        }
+                    }
+                } else {
+                    $statusLogS1 = "S1 request";
+                    $communicator = new ByjunoCommunicator();
+                    $responseS2 = new ByjunoResponse();
+                    $requestS1 = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, "de", "", "", "", "", "","NO");
+                    $xml = $requestS1->createRequest();
+                    if ($this->config["mode"] == 'live') {
+                        $communicator->setServer('live');
+                    } else {
+                        $communicator->setServer('test');
+                    }
+
+                    $responseOnS1 = $communicator->sendRequest($xml, (int)30);
+                    $this->s2Status = 0;
+                    if ($responseOnS1) {
+                        $responseS2->setRawResponse($responseOnS1);
+                        $responseS2->processResponse();
+                        $this->s2Status = (int)$responseS2->getCustomerRequestStatus();
+                        DataHelper::saveLog($this->entityManager, $requestS1, $xml, $responseOnS1, $this->s2Status, $statusLogS1);
+                        if (intval($this->s2Status) > 15) {
+                            $this->s2Status = 0;
+                        }
+                    } else {
+                        DataHelper::saveLog($this->entityManager, $requestS1, $xml, "empty response", "0", $statusLogS1);
+                    }
+                    $riskOwner = "";
+                    if (DataHelper::byjunoIsStatusOk($this->s2Status, $this->config['accept_s2_ij'])) {
+                        $riskOwner = "IJ";
+                    } else if (DataHelper::byjunoIsStatusOk($this->s2Status, $this->config['accept_s2_client'])) {
+                        $riskOwner = "CLIENT";
+                    }
+                    if ($riskOwner == "") {
+                        $details['byjyno_status'] = 400;
+                        $request->markFailed();
+                    } else {
+                        //S3
+                        $statusLogS3 = "S3 request";
+                        $responseS3 = new ByjunoResponse();
+                        $orderId = $payment->getOrder()->getId();
+                        $requestS3 = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, "de", $riskOwner, $orderId, "", $responseS2->getTransactionNumber(), "","YES");
+                        $xmlS3 = $requestS3->createRequest();
+                        $responseOnS3 = $communicator->sendRequest($xmlS3, (int)30);
+                        $this->s3Status = 0;
+                        if ($responseOnS3) {
+                            $responseS3->setRawResponse($responseOnS3);
+                            $responseS3->processResponse();
+                            $this->s3Status = (int)$responseS3->getCustomerRequestStatus();
+                            DataHelper::saveLog($this->entityManager, $requestS3, $xmlS3, $responseOnS3, $this->s3Status, $statusLogS3);
+                            if (intval($this->s3Status) > 15) {
+                                $this->s3Status = 0;
+                            }
+                        } else {
+                            DataHelper::saveLog($this->entityManager, $requestS3, $xmlS3, "empty response", "0", $statusLogS3);
+                        }
+
+                        if (DataHelper::byjunoIsStatusOk($this->s3Status, $this->config['accept_s3'])) {
+                            $details['byjyno_status'] = 200;
+                            $request->markCaptured();
+                        } else {
+                            $details['byjyno_status'] = 400;
+                            $request->markFailed();
+                        }
                     }
                 }
             }
@@ -126,10 +149,7 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
             $payment = $request->getSource();
             $details = ArrayObject::ensureArrayObject($payment->getDetails());
             if (!empty($details['byjyno_status']) && $details['byjyno_status'] == 2) {
-                exit('aaa');
-                // S1 & S2 goes here
-                //  $details['byjyno_status'] = 200;
-                //   $request->setResult((array) $details);
+                throw new \Exception('Error: byjyno_status == 2');
             } else {
                 $details['totalAmount'] = $payment->getTotalAmount();
                 $details['currencyCode'] = $payment->getCurrencyCode();
