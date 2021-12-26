@@ -46,22 +46,10 @@ class DataHelper {
 
     public static function mapMethod($type)
     {
-        if ($type == 'installment_3installment_enable') {
-            return "INSTALLMENT";
-        } else if ($type == 'installment_10installment_enable') {
-            return "INSTALLMENT";
-        } else if ($type == 'installment_12installment_enable') {
-            return "INSTALLMENT";
-        } else if ($type == 'installment_24installment_enable') {
-            return "INSTALLMENT";
-        } else if ($type == 'installment_4x12installment_enable') {
-            return "INSTALLMENT";
-        } else if ($type == 'installment_4x10installment_enable') {
-            return "INSTALLMENT";
-        } else if ($type == 'invoice_single_enable') {
+        if ($type == 'INVOICE') {
             return "INVOICE";
-        } else if ($type == 'invoice_partial_enable') {
-            return "INVOICE";
+        } else if ($type == 'INSTALLMENT') {
+            return "INSTALLMENT";
         }
         return "INVOICE";
     }

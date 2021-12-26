@@ -60,6 +60,7 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
             if ($details['byjyno_status'] == 2) {
                 $_SESSION["BYJUNO_CDP_COMPLETED"] = -1;
                 if ($this->s2Status >= 0) {
+                    $riskOwner = "";
                     if (DataHelper::byjunoIsStatusOk($this->s2Status, $this->config['accept_s2_ij'])) {
                         $riskOwner = "IJ";
                     } else if (DataHelper::byjunoIsStatusOk($this->s2Status, $this->config['accept_s2_client'])) {

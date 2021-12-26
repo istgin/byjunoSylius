@@ -59,6 +59,11 @@ final class ByjunoPaymentMethodsResolver implements PaymentMethodsResolverInterf
                     $statusLogCDP = "CDP request";
                     $responseCDP = new ByjunoResponse();
                     $communicator = new ByjunoCommunicator();
+                    if ($paymentMethod->getGatewayConfig()->getConfig()["mode"] == 'live') {
+                        $communicator->setServer('live');
+                    } else {
+                        $communicator->setServer('test');
+                    }
                     $xmlCDP = $requestCDP->createRequest();
                     $responseOnCDP = $communicator->sendRequest($xmlCDP, (int)30);
                     if ($responseOnCDP) {
