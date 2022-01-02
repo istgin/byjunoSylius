@@ -11,10 +11,10 @@ app_admin_byjunolog:
             index:
                 icon: 'file image outline'
     type: sylius.resource
-    prefix: /admin
+    prefix: /%sylius_admin.path_name%
   
 app_admin_byjunolog_route:
-    path: /admin/byjunologs
+    path: /%sylius_admin.path_name%/byjunologs
     methods: [GET]      
             
 app_txm_show:
