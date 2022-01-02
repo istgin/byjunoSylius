@@ -30,7 +30,7 @@ final class Byjunotmx
         foreach($this->paymentMethodRepository->findAll() as $payment) {
            /* @var $payment PaymentMethod */
            if ($payment->getGatewayConfig()->getFactoryName() == "byjuno") {
-                if ($payment->getGatewayConfig()->getConfig()["tmx_enabled"] != "yes") {
+                if ($payment->getGatewayConfig()->getConfig()["tmx_enabled"] == "yes") {
                     $exists = true;
                     $tmxConfig = $payment->getGatewayConfig()->getConfig()["tmx_key"];
                 }
