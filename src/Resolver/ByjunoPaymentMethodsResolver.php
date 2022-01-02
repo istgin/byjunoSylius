@@ -40,7 +40,6 @@ final class ByjunoPaymentMethodsResolver implements PaymentMethodsResolverInterf
 */
     public function getSupportedMethods(BasePaymentInterface $subject): array
     {
-        //TODO CDP
         return array_filter($this->decoratedPaymentMethodsResolver->getSupportedMethods($subject), function (PaymentMethodInterface $paymentMethod) use ($subject) {
             if ($paymentMethod->getGatewayConfig()->getFactoryName() == 'byjuno') {
                 $minAmount = (float)$paymentMethod->getGatewayConfig()->getConfig()["min_amount"] * 100;

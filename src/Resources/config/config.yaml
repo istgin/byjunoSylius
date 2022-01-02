@@ -1,11 +1,16 @@
 sylius_resource:
     resources:
         byjuno.byjunolog:
-            driver: doctrine/orm # You can use also different driver here
+            driver: doctrine/orm # You can use also different driver heresylius.shop.checkout.steps
             classes:
                 model: Ij\SyliusByjunoPlugin\Entity\ByjunoLog
                 repository: Ij\SyliusByjunoPlugin\Repository\ByjunoLogRepository
-
+sylius_ui:
+    events:
+        sylius.shop.checkout.steps:
+            blocks:
+                byjunotmx:
+                    template: "@IjSyliusByjunoPlugin/byjunotmx.html.twig"
 sylius_grid:
     grids:
         app_admin_byjunolog:

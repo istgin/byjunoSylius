@@ -209,6 +209,24 @@ final class ByjunoGatewayConfigurationType extends AbstractType
                         ),
                     ],
                 ]
+            )
+            ->add(
+                'tmx_enabled',
+                ChoiceType::class,
+                [
+                    'choices' => [
+                        'byjuno.byjuno_plugin.tmx_enabled_yes' => "yes",
+                        'byjuno.byjuno_plugin.tmx_enabled_no' => "no",
+                    ],
+                    'label' => 'byjuno.byjuno_plugin.tmx_enabled',
+                ]
+            )
+            ->add(
+                'tmx_key',
+                TextType::class,
+                [
+                    'label' => 'byjuno.byjuno_plugin.tmx_key'
+                ]
             );
     }
 }

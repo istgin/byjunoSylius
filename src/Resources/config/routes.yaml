@@ -12,3 +12,9 @@ app_admin_byjunolog:
                 icon: 'file image outline'
     type: sylius.resource
     prefix: /admin
+            
+app_txm_show:
+    path: /byjuno/tmx
+    methods: [GET]
+    defaults:
+        _controller: byjuno.controller.tmx::tmxAction

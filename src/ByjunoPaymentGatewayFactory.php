@@ -57,6 +57,8 @@ final class ByjunoPaymentGatewayFactory extends GatewayFactory
                 'accept_s3' => '2',
                 'accept_cdp' => '2',
                 'cdp_enabled' => 'yes',
+                'tmx_enabled' => 'yes',
+                'tmx_key' => 'lq866c5i',
             ];
             $config->defaults($config['payum.default_options']);
 
@@ -80,7 +82,9 @@ final class ByjunoPaymentGatewayFactory extends GatewayFactory
                     'accept_s2_client' => $config['accept_s2_client'],
                     'accept_s3' => $config['accept_s3'],
                     'accept_cdp' => $config['accept_cdp'],
-                    'cdp_enabled' => $config['cdp_enabled']
+                    'cdp_enabled' => $config['cdp_enabled'],
+                    'tmx_enabled' => $config['tmx_enabled'],
+                    'tmx_key' => $config['tmx_key']
                 ];
             };
         }

@@ -9,5 +9,11 @@
             <tag name="form.type"/>
         </service>
 
+        <service id="byjuno.controller.tmx"
+                 class="Ij\SyliusByjunoPlugin\Controller\Byjunotmx">
+            <argument type="service" id="sylius.repository.payment_method" />
+            <argument>%sylius.byjuno.prioritized_factory_name%</argument>
+        </service>
+
     </services>
 </container>

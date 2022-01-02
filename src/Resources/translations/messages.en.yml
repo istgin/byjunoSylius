@@ -22,6 +22,10 @@ byjuno:
         cdp_enabled: Enabled credit check to show payment method
         cdp_enabled_yes: Yes
         cdp_enabled_no: No
+        tmx_enabled: Enable ThreatMetrix security check
+        tmx_enabled_yes: Yes
+        tmx_enabled_no: No
+        tmx_key: ThreatMetrix Org Id
     ui:
         byjunologs: Byjuno logs
         requestid: Request id
