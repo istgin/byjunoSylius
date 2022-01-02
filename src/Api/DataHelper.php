@@ -16,6 +16,7 @@ use Ij\SyliusByjunoPlugin\Repository\ByjunoLogRepository;
 use Sylius\Component\Core\Model\AddressInterface;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 use Sylius\Component\Customer\Model\CustomerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class DataHelper {
 
@@ -223,6 +224,11 @@ class DataHelper {
             $request->setExtraInfo($extraInfo);
         }
 
+        if (!empty($_SESSION["BYJUNO_TMX"]) && $config["tmx_enabled"] == "yes") {
+            $extraInfo["Name"] = 'DEVICE_FINGERPRINT_ID';
+            $extraInfo["Value"] = $_SESSION["BYJUNO_TMX"];
+            $request->setExtraInfo($extraInfo);
+        }
         /*
         $sedId = $this->_checkoutSession->getTmxSession();
         if ($this->_scopeConfig->getValue('byjunocheckoutsettings/byjuno_setup/tmxenabled', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == '1' && !empty($sedId)) {
