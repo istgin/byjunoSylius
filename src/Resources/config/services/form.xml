@@ -15,5 +15,11 @@
             <argument>%sylius.byjuno.prioritized_factory_name%</argument>
         </service>
 
+        <service id="app.listener.admin.menu_builder"
+                 class="Ij\SyliusByjunoPlugin\Menu\Byjunolog">
+            <argument type="service" id="sylius.repository.payment_method" />
+            <tag name="kernel.event_listener" event="sylius.menu.admin.main" method="addAdminMenuItems"/>
+        </service>
+
     </services>
 </container>
