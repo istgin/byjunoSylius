@@ -92,25 +92,73 @@ final class ByjunoGatewayConfigurationType extends AbstractType
                 ]
             )
             ->add(
-                'payment_method',
+                'b2c_allow',
                 ChoiceType::class,
                 [
                     'choices' => [
-                        'byjuno.byjuno_plugin.payment_method_invoice' => "INVOICE",
-                        'byjuno.byjuno_plugin.payment_method_installment' => "INSTALLMENT",
+                        'byjuno.byjuno_plugin.b2c_allow_yes' => "yes",
+                        'byjuno.byjuno_plugin.b2c_allow_no' => "no",
                     ],
-                    'label' => 'byjuno.byjuno_plugin.payment_method',
+                    'label' => 'byjuno.byjuno_plugin.b2c_allow',
                 ]
             )
             ->add(
-                'repayment_type',
+                'payment_method_b2c',
+                ChoiceType::class,
+                [
+                    'choices' => [
+                        'byjuno.byjuno_plugin.payment_method_b2c_invoice' => "INVOICE",
+                        'byjuno.byjuno_plugin.payment_method_b2c_installment' => "INSTALLMENT",
+                    ],
+                    'label' => 'byjuno.byjuno_plugin.payment_method_b2c',
+                ]
+            )
+            ->add(
+                'repayment_type_b2c',
                 TextType::class,
                 [
-                    'label' => 'byjuno.byjuno_plugin.repayment_type',
+                    'label' => 'byjuno.byjuno_plugin.repayment_type_b2c',
                     'constraints' => [
                         new NotBlank(
                             [
-                                'message' => 'byjuno.byjuno_plugin.gateway_configuration.repayment_type.not_blank',
+                                'message' => 'byjuno.byjuno_plugin.gateway_configuration.repayment_type_b2c.not_blank',
+                                'groups' => ['sylius'],
+                            ]
+                        ),
+                    ],
+                ]
+            )
+            ->add(
+                'b2b_allow',
+                ChoiceType::class,
+                [
+                    'choices' => [
+                        'byjuno.byjuno_plugin.b2b_allow_yes' => "yes",
+                        'byjuno.byjuno_plugin.b2b_allow_no' => "no",
+                    ],
+                    'label' => 'byjuno.byjuno_plugin.b2b_allow',
+                ]
+            )
+            ->add(
+                'payment_method_b2b',
+                ChoiceType::class,
+                [
+                    'choices' => [
+                        'byjuno.byjuno_plugin.payment_method_b2b_invoice' => "INVOICE",
+                        'byjuno.byjuno_plugin.payment_method_b2b_installment' => "INSTALLMENT",
+                    ],
+                    'label' => 'byjuno.byjuno_plugin.payment_method_b2bc',
+                ]
+            )
+            ->add(
+                'repayment_type_b2b',
+                TextType::class,
+                [
+                    'label' => 'byjuno.byjuno_plugin.repayment_type_b2b',
+                    'constraints' => [
+                        new NotBlank(
+                            [
+                                'message' => 'byjuno.byjuno_plugin.gateway_configuration.repayment_type_b2b.not_blank',
                                 'groups' => ['sylius'],
                             ]
                         ),

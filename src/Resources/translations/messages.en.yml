@@ -11,10 +11,20 @@ byjuno:
         tech_email: Technical email contact
         min_amount: Minimum amount to show payment method
         max_amount: Maximum amount to show payment method
-        payment_method: Payment method type
-        payment_method_invoice: Invoice
-        payment_method_installment: Installment
-        repayment_type: Repayment type (number)
+        b2c_allow: Allow B2C for this payment
+        b2c_allow_yes: Yes
+        b2c_allow_no: No
+        payment_method_b2c: Payment method type for B2C
+        payment_method_b2c_invoice: Invoice
+        payment_method_b2c_installment: Installment
+        repayment_type_b2c: Repayment type for B2C (number)
+        b2b_allow: Allow B2B for this payment
+        b2b_allow_yes: Yes
+        b2b_allow_no: No
+        payment_method_b2b: Payment method type for B2B
+        payment_method_b2b_invoice: Invoice
+        payment_method_b2b_installment: Installment
+        repayment_type_b2b: Repayment type for B2B (number)
         accept_s2_ij: S2 allowed Intrum risk statuses
         accept_s2_client: S2 allowed client risk statuses
         accept_s3: S3 allowed statuses

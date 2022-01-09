@@ -297,11 +297,11 @@ class DataHelper {
         $request->setExtraInfo($extraInfo);
 
         $extraInfo["Name"] = 'PAYMENTMETHOD';
-        $extraInfo["Value"] = DataHelper::mapMethod($config["payment_method"]);
+        $extraInfo["Value"] = DataHelper::mapMethod($config["payment_method_b2c"]);
         $request->setExtraInfo($extraInfo);
 
         $extraInfo["Name"] = 'REPAYMENTTYPE';
-        $extraInfo["Value"] = $config["repayment_type"];
+        $extraInfo["Value"] = $config["repayment_type_b2c"];
         $request->setExtraInfo($extraInfo);
 
         if (!empty($orderId)) {
