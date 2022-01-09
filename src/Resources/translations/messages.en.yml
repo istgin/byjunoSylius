@@ -43,6 +43,7 @@ byjuno:
         firstname: First name
         lastname: Last name
         byjunostatus: Byjuno status
+        edit_byjunolog: View Byjuno request log
         ip: Ip
         id: ID
         

@@ -8,8 +8,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoCommunicator;
 use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoResponse;
 use Ij\SyliusByjunoPlugin\Api\DataHelper;
+use Sylius\Behat\Context\Ui\Shop\LocaleContext;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Sylius\Component\Locale\Context\CompositeLocaleContext;
 use Sylius\Component\Payment\Model\PaymentInterface as BasePaymentInterface;
 use Sylius\Component\Payment\Resolver\PaymentMethodsResolverInterface;
 
@@ -19,12 +21,16 @@ final class ByjunoPaymentMethodsResolver implements PaymentMethodsResolverInterf
 
     private string $firstPaymentMethodFactoryName;
     private $entityManager;
+    /* @var CompositeLocaleContext */
+    private $localeProvider;
 
     public function __construct(
+        CompositeLocaleContext $lp,
         EntityManagerInterface $em,
         PaymentMethodsResolverInterface $decoratedPaymentMethodsResolver,
         string $firstPaymentMethodFactoryName)
     {
+        $this->localeProvider = $lp;
         $this->decoratedPaymentMethodsResolver = $decoratedPaymentMethodsResolver;
         $this->firstPaymentMethodFactoryName = $firstPaymentMethodFactoryName;
         $this->entityManager = $em;
@@ -43,6 +49,11 @@ final class ByjunoPaymentMethodsResolver implements PaymentMethodsResolverInterf
     {
         return array_filter($this->decoratedPaymentMethodsResolver->getSupportedMethods($subject), function (PaymentMethodInterface $paymentMethod) use ($subject) {
             if ($paymentMethod->getGatewayConfig()->getFactoryName() == 'byjuno') {
+                $locale = $this->localeProvider->getLocaleCode();
+                $localeEx = explode("_", $locale);
+                if (!empty($localeEx[0])) {
+                    $locale = $localeEx[0];
+                }
                 $minAmount = (float)$paymentMethod->getGatewayConfig()->getConfig()["min_amount"] * 100;
                 $maxAmount = (float)$paymentMethod->getGatewayConfig()->getConfig()["max_amount"] * 100;
                 $allowB2C = $paymentMethod->getGatewayConfig()->getConfig()["b2c_allow"];
@@ -77,7 +88,7 @@ final class ByjunoPaymentMethodsResolver implements PaymentMethodsResolverInterf
                 if (isset($_SESSION["BYJUNO_CDP_COMPLETED"]) && $_SESSION["BYJUNO_CDP_COMPLETED"] != -1) {
                     $statusCDP = $_SESSION["BYJUNO_CDP_COMPLETED"];
                 } else {
-                    $requestCDP = DataHelper::CreateSyliusShopRequestOrderQuote($paymentMethod->getGatewayConfig()->getConfig(), $payment, "de", "", "", "", "", "CDP", "NO");
+                    $requestCDP = DataHelper::CreateSyliusShopRequestOrderQuote($paymentMethod->getGatewayConfig()->getConfig(), $payment, $locale, "", "", "", "", "CDP", "NO");
                     $statusLogCDP = "CDP request";
                     if ($b2b) {
                         $statusLogCDP = "CDP request for company";

@@ -31,6 +31,7 @@ use Payum\Core\Model\PaymentInterface;
 use Payum\Core\Request\Convert;
 use Sylius\Bundle\PayumBundle\Request\GetStatus;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
+use Sylius\Component\Locale\Context\CompositeLocaleContext;
 
 final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface
 {
@@ -40,10 +41,14 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
     public $entityManager;
     private $s2Status = -1;
     private $s3Status = -1;
+    /* @var CompositeLocaleContext */
+    private $localeProvider;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em,
+                                CompositeLocaleContext $lp)
     {
         $this->entityManager = $em;
+        $this->localeProvider = $lp;
     }
 
     /**
@@ -57,6 +62,11 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
         if ($request instanceof GetStatus && $request->getModel() instanceof Payment) {
             $payment = $request->getModel();
             $details = $payment->getDetails();
+            $locale = $this->localeProvider->getLocaleCode();
+            $localeEx = explode("_", $locale);
+            if (!empty($localeEx[0])) {
+                $locale = $localeEx[0];
+            }
             /** @var $payment SyliusPaymentInterface */
             if ($details['byjyno_status'] == 2) {
                 $b2b = false;
@@ -92,7 +102,7 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
                     }
                     $communicator = new ByjunoCommunicator();
                     $responseS2 = new ByjunoResponse();
-                    $requestS1 = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, "de", "", "", "", "", "","NO");
+                    $requestS1 = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, $locale, "", "", "", "", "","NO");
                     if ($b2b) {
                         $xml = $requestS1->createRequestCompany();
                     } else {
@@ -134,7 +144,7 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
                         }
                         $responseS3 = new ByjunoResponse();
                         $orderId = $payment->getOrder()->getId();
-                        $requestS3 = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, "de", $riskOwner, $orderId, "", $responseS2->getTransactionNumber(), "","YES");
+                        $requestS3 = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, $locale, $riskOwner, $orderId, "", $responseS2->getTransactionNumber(), "","YES");
                         if ($b2b) {
                             $xmlS3 = $requestS3->createRequestCompany();
                         } else {
