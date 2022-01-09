@@ -112,7 +112,8 @@ final class ByjunoPaymentMethodsResolver implements PaymentMethodsResolverInterf
                     } else {
                         $xmlCDP = $requestCDP->createRequest();
                     }
-                    $responseOnCDP = $communicator->sendRequest($xmlCDP, (int)30);
+                    $timeout = intval($paymentMethod->getGatewayConfig()->getConfig()["timeout"]);
+                    $responseOnCDP = $communicator->sendRequest($xmlCDP, $timeout);
                     if ($responseOnCDP) {
                         $responseCDP->setRawResponse($responseOnCDP);
                         $responseCDP->processResponse();
@@ -121,10 +122,11 @@ final class ByjunoPaymentMethodsResolver implements PaymentMethodsResolverInterf
                             $statusCDP = 0;
                         }
                         DataHelper::saveLog($this->entityManager, $requestCDP, $xmlCDP, $responseOnCDP, $statusCDP, $statusLogCDP);
+                        $_SESSION["BYJUNO_CDP_COMPLETED"] = $statusCDP;
                     } else {
                         DataHelper::saveLog($this->entityManager, $requestCDP, $xmlCDP, "empty response", "0", $statusLogCDP);
+                        $_SESSION["BYJUNO_CDP_COMPLETED"] = null;
                     }
-                    $_SESSION["BYJUNO_CDP_COMPLETED"] = $statusCDP;
                 }
 
                 if (DataHelper::byjunoIsStatusOk($statusCDP, $paymentMethod->getGatewayConfig()->getConfig()['accept_cdp'])) {

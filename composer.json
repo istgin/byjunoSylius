@@ -5,7 +5,8 @@
     "license": "MIT",
     "require": {
         "php": "^7.4 || ^8.0",
-        "sylius/sylius": "^1.9 || ^1.10"
+        "sylius/sylius": "^1.9 || ^1.10",
+        "ext-curl": "*"
     },
     "require-dev": {
         "behat/behat": "^3.7",
@@ -37,7 +38,8 @@
         "symfony/web-server-bundle": "^4.4|^5.2",
         "vimeo/psalm": "4.4.1",
         "slevomat/coding-standard": "~6.0",
-        "symfony/dependency-injection": "<4.4.19 || >=5.0.0 <5.2.2"
+        "symfony/dependency-injection": "<4.4.19 || >=5.0.0 <5.2.2",
+        "ext-curl": "*"
     },
     "prefer-stable": true,
     "autoload": {

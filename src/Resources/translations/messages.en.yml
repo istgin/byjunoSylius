@@ -9,6 +9,7 @@ byjuno:
         user_id: User ID
         password: Password
         tech_email: Technical email contact
+        timeout: CDP timeout
         min_amount: Minimum amount to show payment method
         max_amount: Maximum amount to show payment method
         b2c_allow: Allow B2C for this payment

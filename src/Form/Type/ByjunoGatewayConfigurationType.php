@@ -92,6 +92,21 @@ final class ByjunoGatewayConfigurationType extends AbstractType
                 ]
             )
             ->add(
+                'timeout',
+                TextType::class,
+                [
+                    'label' => 'byjuno.byjuno_plugin.timeout',
+                    'constraints' => [
+                        new NotBlank(
+                            [
+                                'message' => 'byjuno.byjuno_plugin.gateway_configuration.timeout.not_blank',
+                                'groups' => ['sylius'],
+                            ]
+                        ),
+                    ],
+                ]
+            )
+            ->add(
                 'b2c_allow',
                 ChoiceType::class,
                 [

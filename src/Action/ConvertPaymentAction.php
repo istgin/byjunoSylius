@@ -111,6 +111,7 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
                     if (!empty($localeCodeOrder)) {
                         $locale = $localeCodeOrder;
                     }
+                    $timeout = intval($this->config["timeout"]);
                     $requestS1 = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, $locale, "", "", "", "", "","NO");
                     if ($b2b) {
                         $xml = $requestS1->createRequestCompany();
@@ -123,7 +124,7 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
                         $communicator->setServer('test');
                     }
 
-                    $responseOnS1 = $communicator->sendRequest($xml, (int)30);
+                    $responseOnS1 = $communicator->sendRequest($xml, $timeout);
                     $this->s2Status = 0;
                     if ($responseOnS1) {
                         $responseS2->setRawResponse($responseOnS1);
@@ -158,7 +159,7 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
                         } else {
                             $xmlS3 = $requestS3->createRequest();
                         }
-                        $responseOnS3 = $communicator->sendRequest($xmlS3, (int)30);
+                        $responseOnS3 = $communicator->sendRequest($xmlS3, $timeout);
                         $this->s3Status = 0;
                         if ($responseOnS3) {
                             $responseS3->setRawResponse($responseOnS3);
