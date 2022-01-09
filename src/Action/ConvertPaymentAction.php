@@ -102,6 +102,15 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
                     }
                     $communicator = new ByjunoCommunicator();
                     $responseS2 = new ByjunoResponse();
+                    $localeCodeOrder = $payment->getOrder()->getLocaleCode();
+                    $orderId = $payment->getOrder()->getNumber();
+                    $localeCodeOrderEx = explode("_", $locale);
+                    if (!empty($localeCodeOrderEx[0])) {
+                        $localeCodeOrder = $localeEx[0];
+                    }
+                    if (!empty($localeCodeOrder)) {
+                        $locale = $localeCodeOrder;
+                    }
                     $requestS1 = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, $locale, "", "", "", "", "","NO");
                     if ($b2b) {
                         $xml = $requestS1->createRequestCompany();
@@ -143,7 +152,6 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
                             $statusLogS3 = "S3 request for company";
                         }
                         $responseS3 = new ByjunoResponse();
-                        $orderId = $payment->getOrder()->getId();
                         $requestS3 = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, $locale, $riskOwner, $orderId, "", $responseS2->getTransactionNumber(), "","YES");
                         if ($b2b) {
                             $xmlS3 = $requestS3->createRequestCompany();

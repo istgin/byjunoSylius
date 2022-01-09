@@ -65,6 +65,13 @@ final class ByjunoPaymentMethodsResolver implements PaymentMethodsResolverInterf
                 /* @var $payment SyliusPaymentInterface */
                 $payment = $subject;
                 $orderId = $payment->getOrder()->getId();
+                $localeCodeOrderEx = explode("_", $locale);
+                if (!empty($localeCodeOrderEx[0])) {
+                    $localeCodeOrder = $localeEx[0];
+                }
+                if (!empty($localeCodeOrder)) {
+                    $locale = $localeCodeOrder;
+                }
                 $billingAddress = $payment->getOrder()->getBillingAddress();
                 $company = $billingAddress->getCompany();
                 $b2b = false;
