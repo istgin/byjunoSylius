@@ -148,6 +148,11 @@ class DataHelper {
 
             }
         }
+        $b2b = false;
+        $company = $billingAddress->getCompany();
+        if (!empty($b2b)) {
+            $b2b = true;
+        }
 
       //  $gender_male_possible_prefix_array = $this->_scopeConfig->getValue('byjunocheckoutsettings/byjuno_setup/gender_male_possible_prefix',
       //      \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
@@ -296,13 +301,23 @@ class DataHelper {
         $extraInfo["Value"] = $requestId;
         $request->setExtraInfo($extraInfo);
 
-        $extraInfo["Name"] = 'PAYMENTMETHOD';
-        $extraInfo["Value"] = DataHelper::mapMethod($config["payment_method_b2c"]);
-        $request->setExtraInfo($extraInfo);
+        if ($b2b) {
+            $extraInfo["Name"] = 'PAYMENTMETHOD';
+            $extraInfo["Value"] = DataHelper::mapMethod($config["payment_method_b2b"]);
+            $request->setExtraInfo($extraInfo);
 
-        $extraInfo["Name"] = 'REPAYMENTTYPE';
-        $extraInfo["Value"] = $config["repayment_type_b2c"];
-        $request->setExtraInfo($extraInfo);
+            $extraInfo["Name"] = 'REPAYMENTTYPE';
+            $extraInfo["Value"] = $config["repayment_type_b2b"];
+            $request->setExtraInfo($extraInfo);
+        } else {
+            $extraInfo["Name"] = 'PAYMENTMETHOD';
+            $extraInfo["Value"] = DataHelper::mapMethod($config["payment_method_b2c"]);
+            $request->setExtraInfo($extraInfo);
+
+            $extraInfo["Name"] = 'REPAYMENTTYPE';
+            $extraInfo["Value"] = $config["repayment_type_b2c"];
+            $request->setExtraInfo($extraInfo);
+        }
 
         if (!empty($orderId)) {
             $extraInfo["Name"] = 'ORDERID';

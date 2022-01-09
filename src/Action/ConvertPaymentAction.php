@@ -30,6 +30,7 @@ use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Model\PaymentInterface;
 use Payum\Core\Request\Convert;
 use Sylius\Bundle\PayumBundle\Request\GetStatus;
+use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 
 final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface
 {
@@ -56,8 +57,14 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
         if ($request instanceof GetStatus && $request->getModel() instanceof Payment) {
             $payment = $request->getModel();
             $details = $payment->getDetails();
-            /** @var $payment Payment*/
+            /** @var $payment SyliusPaymentInterface */
             if ($details['byjyno_status'] == 2) {
+                $b2b = false;
+                $billingAddress = $payment->getOrder()->getBillingAddress();
+                $company = $billingAddress->getCompany();
+                if (!empty($company)) {
+                    $b2b = true;
+                }
                 $_SESSION["BYJUNO_CDP_COMPLETED"] = -1;
                 if ($this->s2Status >= 0) {
                     $riskOwner = "";
@@ -80,10 +87,17 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
                     }
                 } else {
                     $statusLogS1 = "S1 request";
+                    if ($b2b) {
+                        $statusLogS1 = "S1 request for company";
+                    }
                     $communicator = new ByjunoCommunicator();
                     $responseS2 = new ByjunoResponse();
                     $requestS1 = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, "de", "", "", "", "", "","NO");
-                    $xml = $requestS1->createRequest();
+                    if ($b2b) {
+                        $xml = $requestS1->createRequestCompany();
+                    } else {
+                        $xml = $requestS1->createRequest();
+                    }
                     if ($this->config["mode"] == 'live') {
                         $communicator->setServer('live');
                     } else {
@@ -115,10 +129,17 @@ final class ConvertPaymentAction implements ActionInterface, ApiAwareInterface, 
                     } else {
                         //S3
                         $statusLogS3 = "S3 request";
+                        if ($b2b) {
+                            $statusLogS3 = "S3 request for company";
+                        }
                         $responseS3 = new ByjunoResponse();
                         $orderId = $payment->getOrder()->getId();
                         $requestS3 = DataHelper::CreateSyliusShopRequestOrderQuote($this->config, $payment, "de", $riskOwner, $orderId, "", $responseS2->getTransactionNumber(), "","YES");
-                        $xmlS3 = $requestS3->createRequest();
+                        if ($b2b) {
+                            $xmlS3 = $requestS3->createRequestCompany();
+                        } else {
+                            $xmlS3 = $requestS3->createRequest();
+                        }
                         $responseOnS3 = $communicator->sendRequest($xmlS3, (int)30);
                         $this->s3Status = 0;
                         if ($responseOnS3) {

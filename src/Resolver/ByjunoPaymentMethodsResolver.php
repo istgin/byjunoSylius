@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoCommunicator;
 use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoResponse;
 use Ij\SyliusByjunoPlugin\Api\DataHelper;
+use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Payment\Model\PaymentInterface as BasePaymentInterface;
 use Sylius\Component\Payment\Resolver\PaymentMethodsResolverInterface;
@@ -44,17 +45,31 @@ final class ByjunoPaymentMethodsResolver implements PaymentMethodsResolverInterf
             if ($paymentMethod->getGatewayConfig()->getFactoryName() == 'byjuno') {
                 $minAmount = (float)$paymentMethod->getGatewayConfig()->getConfig()["min_amount"] * 100;
                 $maxAmount = (float)$paymentMethod->getGatewayConfig()->getConfig()["max_amount"] * 100;
+                $allowB2C = $paymentMethod->getGatewayConfig()->getConfig()["b2c_allow"];
+                $allowB2B = $paymentMethod->getGatewayConfig()->getConfig()["b2b_allow"];
                 $orderAmount = $subject->getAmount();
                 if ($minAmount > $orderAmount || $maxAmount < $orderAmount) {
+                    return false;
+                }
+                /* @var $payment SyliusPaymentInterface */
+                $payment = $subject;
+                $orderId = $payment->getOrder()->getId();
+                $billingAddress = $payment->getOrder()->getBillingAddress();
+                $company = $billingAddress->getCompany();
+                $b2b = false;
+                if (!empty($company)) {
+                    $b2b = true;
+                }
+                if (!$b2b && $allowB2C == "no") {
+                    return false;
+                }
+                if ($b2b && $allowB2B == "no") {
                     return false;
                 }
                 if ($paymentMethod->getGatewayConfig()->getConfig()["cdp_enabled"] != "yes") {
                     return true;
                 }
                 $statusCDP = 0;
-                /* @var $payment \App\Entity\Payment\Payment */
-                $payment = $subject;
-                $orderId = $payment->getOrder()->getId();
                 if (empty($_SESSION["BYJUNO_CDP_ORDER"]) || $_SESSION["BYJUNO_CDP_ORDER"] != $orderId) {
                     $_SESSION["BYJUNO_CDP_COMPLETED"] = null;
                 }
@@ -64,6 +79,9 @@ final class ByjunoPaymentMethodsResolver implements PaymentMethodsResolverInterf
                 } else {
                     $requestCDP = DataHelper::CreateSyliusShopRequestOrderQuote($paymentMethod->getGatewayConfig()->getConfig(), $payment, "de", "", "", "", "", "CDP", "NO");
                     $statusLogCDP = "CDP request";
+                    if ($b2b) {
+                        $statusLogCDP = "CDP request for company";
+                    }
                     $responseCDP = new ByjunoResponse();
                     $communicator = new ByjunoCommunicator();
                     if ($paymentMethod->getGatewayConfig()->getConfig()["mode"] == 'live') {
@@ -71,7 +89,11 @@ final class ByjunoPaymentMethodsResolver implements PaymentMethodsResolverInterf
                     } else {
                         $communicator->setServer('test');
                     }
-                    $xmlCDP = $requestCDP->createRequest();
+                    if ($b2b) {
+                        $xmlCDP = $requestCDP->createRequestCompany();
+                    } else {
+                        $xmlCDP = $requestCDP->createRequest();
+                    }
                     $responseOnCDP = $communicator->sendRequest($xmlCDP, (int)30);
                     if ($responseOnCDP) {
                         $responseCDP->setRawResponse($responseOnCDP);
