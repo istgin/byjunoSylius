@@ -150,7 +150,7 @@ class DataHelper {
         }
         $b2b = false;
         $company = $billingAddress->getCompany();
-        if (!empty($b2b)) {
+        if (!empty($company)) {
             $b2b = true;
         }
 
