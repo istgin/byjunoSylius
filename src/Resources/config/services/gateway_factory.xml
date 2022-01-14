@@ -22,32 +22,15 @@
             <argument type="service" id="Ij\SyliusByjunoPlugin\Resolver\ByjunoPaymentMethodsResolver.inner" />
             <argument>%sylius.byjuno.prioritized_factory_name%</argument>
         </service>
-<!--
-        <service
-            id="Ij\SyliusByjunoPlugin\Resolver\AfterCheckoutOrderPaymentProcessor"
-            decorates="sylius.order_processing.order_payment_processor.after_checkout"
-        >
-            <argument type="service" id="Ij\SyliusByjunoPlugin\Resolver\AfterCheckoutOrderPaymentProcessor.inner" />
+
+        <service id="byjuno.byjuno_plugin.gateway_on_cancel_order_pre" class="Ij\SyliusByjunoPlugin\Resolver\PreOrderUpdate">
+            <tag name="kernel.event_listener" event="sylius.order.pre_update" method="onCancel" />
         </service>
 
-        <service
-            id="Ij\SyliusByjunoPlugin\Resolver\AfterCheckoutOrderPaymentProcessor2"
-            decorates="sylius.unpaid_orders_state_updater"
-        >
-            <argument type="service" id="Ij\SyliusByjunoPlugin\Resolver\AfterCheckoutOrderPaymentProcessor2.inner" />
+        <service id="byjuno.byjuno_plugin.gateway_on_cancel_order_post" class="Ij\SyliusByjunoPlugin\Resolver\PostOrderUpdate">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <tag name="kernel.event_listener" event="sylius.order.post_update" method="onCancel" />
         </service>
--->
-
-        <service id="sylius.listener.order_completexxx" class="Ij\SyliusByjunoPlugin\Resolver\OrderCompleteListener">
-            <tag name="kernel.event_listener" event="sylius.order.post_update" method="sendConfirmationEmail" />
-        </service>
-
-
-        <service id="Ij\SyliusByjunoPlugin\Resolver\OrderInventoryOperator" decorates="sylius.inventory.order_inventory_operator">
-            <argument type="service" id="Ij\SyliusByjunoPlugin\Resolver\OrderInventoryOperator.inner" />
-        </service>
-
-
 
     </services>
 </container>

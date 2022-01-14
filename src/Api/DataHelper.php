@@ -11,6 +11,7 @@ use DateTimeInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoRequest;
+use Ij\SyliusByjunoPlugin\Api\Communicator\ByjunoS5Request;
 use Ij\SyliusByjunoPlugin\Entity\ByjunoLog;
 use Ij\SyliusByjunoPlugin\Repository\ByjunoLogRepository;
 use Sylius\Component\Core\Model\AddressInterface;
@@ -355,6 +356,27 @@ class DataHelper {
         return $request;
     }
 
+    public static function CreateShopRequestS5Cancel(Array $config, $amount, $orderCurrency, $orderId, $customerId, $date)
+    {
+        $request = new ByjunoS5Request();
+        $request->setClientId($config["client_id"]);
+        $request->setUserID($config["user_id"]);
+        $request->setPassword($config["password"]);
+        $request->setVersion("1.00");
+        $request->setRequestEmail($config["tech_email"]);
+
+        $request->setRequestId(uniqid((String)$orderId . "_"));
+        $request->setOrderId($orderId);
+        $request->setClientRef($customerId);
+        $request->setTransactionDate($date);
+        $request->setTransactionAmount(number_format($amount / 100, 2, '.', ''));
+        $request->setTransactionCurrency($orderCurrency);
+        $request->setAdditional2('');
+        $request->setTransactionType("EXPIRED");
+        $request->setOpenBalance("0");
+        return $request;
+    }
+
     public static function saveLog(EntityManagerInterface $em, ByjunoRequest $request, $xml_request, $xml_response, $status, $type)
     {
         /* @var $repo ByjunoLogRepository */
@@ -365,6 +387,22 @@ class DataHelper {
         $log->setFirstname($request->getFirstName());
         $log->setLastname($request->getLastName());
         $log->setIP($_SERVER['REMOTE_ADDR']);
+        $log->setByjunoStatus((($status != "") ? $status . '' : 'Error'));
+        $log->setXmlRequest($xml_request);
+        $log->setXmlResponse($xml_response);
+        $repo->add($log);
+    }
+
+    public static function saveS5Log(EntityManagerInterface $em, ByjunoS5Request $request, $xml_request, $xml_response, $status, $type, $firstName, $lastName)
+    {
+        /* @var $repo ByjunoLogRepository */
+        $repo = $em->getRepository(ByjunoLog::class);
+        $log = new ByjunoLog();
+        $log->setRequestId($request->getRequestId());
+        $log->setRequestType($type);
+        $log->setFirstname($firstName);
+        $log->setLastname($lastName);
+        $log->setIP((isset($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : "127.0.0.1");
         $log->setByjunoStatus((($status != "") ? $status . '' : 'Error'));
         $log->setXmlRequest($xml_request);
         $log->setXmlResponse($xml_response);

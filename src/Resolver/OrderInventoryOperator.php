@@ -42,7 +42,7 @@ final class OrderInventoryOperator implements OrderInventoryOperatorInterface
         $o = $order;
         if ($o->getState() === \Sylius\Component\Order\Model\OrderInterface::STATE_CANCELLED) {
             $isByjunoUsed = false;
-            $payment = $o->getPayments()->filter(function (BasePaymentInterface $payment) : void {
+            $o->getPayments()->filter(function (BasePaymentInterface $payment) : void {
                 /** @var \Sylius\Component\Core\Model\PaymentMethodInterface $method */
                 $method = $payment->getMethod();
                 //var_dump($method->getGatewayConfig()->getFactoryName());
@@ -50,8 +50,8 @@ final class OrderInventoryOperator implements OrderInventoryOperatorInterface
                     $isByjunoUsed = true;
                 }
             });
-             var_dump($isByjunoUsed);
             if ($isByjunoUsed) {
+
             }
         }
       //  throw new Exception("RRRR");
