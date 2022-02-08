@@ -5,9 +5,9 @@
 {
     "type": "vcs",
     "url": "https://github.com/istgin/byjunoSylius"
-}
+}</code><br>
 add package "ij/byjuno-plugin": "*"
-</code><br><br>
+<br><br>
 - add file packages/ij_sylius_byjuno.yaml<br>
 
 imports: <br>
